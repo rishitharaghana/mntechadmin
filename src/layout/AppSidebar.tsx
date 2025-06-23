@@ -39,7 +39,10 @@ const navItems: NavItem[] = [
   {
     name: "Tables",
     icon: <TableIcon />,
-    subItems: [{ name: "Reviews", path: "/basic-tables", pro: false }],
+    subItems: [
+      { name: "Reviews", path: "/basic-tables", pro: false },
+      { name: "IT Services", path: "/it-services", pro: false }
+    ],
   },
   {
     name: "Pages",
