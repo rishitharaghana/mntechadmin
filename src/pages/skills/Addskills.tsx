@@ -68,7 +68,7 @@ export default function AddSkills() {
         percentage: formData.percentage,
       });
       alert('Skill added successfully!');
-      navigate(-1, { state: { refresh: true } }); // Signal refresh
+      navigate(-1, { state: { refresh: true } }); 
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to add skill');
       console.error('Error adding skill:', err);
@@ -107,8 +107,7 @@ export default function AddSkills() {
             value={formData.percentage}
             onChange={handleInputChange}
             placeholder="Enter percentage"
-            min={0}
-            max={100}
+          
             step={1}
             disabled={loading}
           />
