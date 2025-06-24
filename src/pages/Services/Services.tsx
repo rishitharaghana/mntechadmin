@@ -14,11 +14,13 @@ import ComponentCard from '../../components/common/ComponentCard';
 import PageBreadcrumb from '../../components/common/PageBreadCrumb';
 import PageMeta from '../../components/common/PageMeta';
 
+
 // Define the Service interface for individual service entries
 interface IndividualService {
   _id: string;
   title: string;
   description: string;
+  icon?: string;
 }
 
 // Define the parent Service interface
@@ -37,7 +39,9 @@ export default function ServicesTable() {
   const [individualServices, setIndividualServices] = useState<IndividualService[]>([]);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [parentId, setParentId] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true); // State for fetching loader
+  const [loading, setLoading] = useState<boolean>(true);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 10;
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -47,10 +51,9 @@ export default function ServicesTable() {
     const fetchServices = async () => {
       try {
         setLoading(true);
-        const response = await ngrokAxiosInstance.get('/dynamic/service');
-        // Flatten the nested services arrays into a single array
+        const response = await ngrokAxiosInstance.get('/dynamic/service/');
         const allServices = response.data.flatMap((service: Service) => service.services);
-        const parentIdTemp = response.data[0]?._id || '68563d750ea11f5d6792298a'; // Use first parent's ID or fallback
+        const parentIdTemp = response.data[0]?._id || '685a7586a5646909c426b63c'; // Use provided parent ID
         setIndividualServices(allServices);
         setParentId(parentIdTemp);
       } catch (error) {
@@ -61,7 +64,7 @@ export default function ServicesTable() {
       }
     };
     fetchServices();
-  }, [location]); // Refetch when location changes (e.g., after add/edit)
+  }, [location]);
 
   // Toggle dropdown menu
   const toggleMenu = (id: string) => {
@@ -87,30 +90,81 @@ export default function ServicesTable() {
 
   // Handle Edit action
   const handleEditClick = (service: IndividualService) => {
-    console.log('Edit service:', service);
     navigate(`/services/edit/${service._id}`, { state: { parentId } });
     setActiveMenu(null);
   };
 
   // Handle Delete action
-  // Handle Delete action
-const handleDeleteClick = async (service: IndividualService) => {
-  if (window.confirm('Are you sure you want to delete this service?')) {
-    try {
-      if (!parentId) {
-        throw new Error('Parent ID is not available');
+  const handleDeleteClick = async (service: IndividualService) => {
+    if (window.confirm('Are you sure you want to delete this service?')) {
+      try {
+        if (!parentId) {
+          throw new Error('Parent ID is not available');
+        }
+        await ngrokAxiosInstance.delete(`/dynamic/service/${parentId}/service-item/${service._id}`);
+        setIndividualServices(individualServices.filter((s) => s._id !== service._id));
+        console.log('Service item deleted:', service._id);
+      } catch (error) {
+        console.error('Error deleting service item:', error);
       }
-      // Use the correct API endpoint with parentId and itemId
-      await ngrokAxiosInstance.delete(`/dynamic/service/${parentId}/service-item/${service._id}`);
-      // Update the state to remove the deleted service
-      setIndividualServices(individualServices.filter((s) => s._id !== service._id));
-      console.log('Service item deleted:', service._id);
-    } catch (error) {
-      console.error('Error deleting service item:', error);
+      setActiveMenu(null);
     }
-    setActiveMenu(null);
-  }
-};
+  };
+
+  // Pagination logic
+  const totalItems = individualServices.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+  const paginatedData = individualServices.slice(startIndex, endIndex);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const getPaginationItems = () => {
+    const pages: (number | string)[] = [];
+    const totalVisiblePages = 5;
+
+    if (totalPages <= totalVisiblePages + 2) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      let start = Math.max(2, currentPage - 2);
+      let end = Math.min(totalPages - 1, currentPage + 2);
+
+      if (currentPage <= 3) {
+        start = 2;
+        end = 5;
+      }
+
+      if (currentPage >= totalPages - 2) {
+        start = totalPages - 4;
+        end = totalPages - 1;
+      }
+
+      pages.push(1);
+      if (start > 2) pages.push('...');
+
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+
+      if (end < totalPages - 1) pages.push('...');
+      if (totalPages > 1) pages.push(totalPages);
+    }
+
+    return pages;
+  };
 
   // Show loader while fetching data
   if (loading) {
@@ -153,11 +207,11 @@ const handleDeleteClick = async (service: IndividualService) => {
           </Button>
         </div>
         <ComponentCard title="Services Table">
-          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.5] dark:bg-white/[0.3]">
             <div className="max-w-full overflow-x-auto">
               <Table>
                 {/* Table Header */}
-                <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+                <TableHeader className="border-b border-gray-100 dark:border-white/[0.5]">
                   <TableRow>
                     <TableCell
                       isHeader
@@ -187,12 +241,12 @@ const handleDeleteClick = async (service: IndividualService) => {
                 </TableHeader>
 
                 {/* Table Body */}
-                <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                  {individualServices.length > 0 ? (
-                    individualServices.map((service, index) => (
+                <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.5]">
+                  {paginatedData.length > 0 ? (
+                    paginatedData.map((service, index) => (
                       <TableRow key={service._id}>
                         <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                          {index + 1}
+                          {startIndex + index + 1}
                         </TableCell>
                         <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
                           {service.title}
@@ -234,7 +288,10 @@ const handleDeleteClick = async (service: IndividualService) => {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell  className="px-5 py-4 text-center text-gray-500 text-theme-sm dark:text-gray-400">
+                      <TableCell
+                       
+                        className="px-5 py-4 text-center text-gray-500 text-theme-sm dark:text-gray-400"
+                      >
                         No services available
                       </TableCell>
                     </TableRow>
@@ -243,6 +300,57 @@ const handleDeleteClick = async (service: IndividualService) => {
               </Table>
             </div>
           </div>
+
+          {/* Pagination Controls */}
+          {totalItems > itemsPerPage && (
+            <div className="flex flex-col sm:flex-row justify-between items-center mt-4 px-4 py-2 gap-4">
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                Showing {startIndex + 1} to {endIndex} of {totalItems} entries
+              </div>
+              <div className="flex gap-2 flex-wrap justify-center">
+                <Button
+                  variant={currentPage === 1 ? 'outline' : 'primary'}
+                  size="sm"
+                  onClick={goToPreviousPage}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </Button>
+                {getPaginationItems().map((page, index) =>
+                  page === '...' ? (
+                    <span
+                      key={`ellipsis-${index}`}
+                      className="px-3 py-1 text-gray-500 dark:text-gray-400"
+                    >
+                      ...
+                    </span>
+                  ) : (
+                    <Button
+                      key={page}
+                      variant={page === currentPage ? 'primary' : 'outline'}
+                      size="sm"
+                      onClick={() => goToPage(page as number)}
+                      className={
+                        page === currentPage
+                          ? 'bg-[#1D3A76] text-white'
+                          : 'text-gray-500'
+                      }
+                    >
+                      {page}
+                    </Button>
+                  )
+                )}
+                <Button
+                  variant={currentPage === totalPages ? 'outline' : 'primary'}
+                  size="sm"
+                  onClick={goToNextPage}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
         </ComponentCard>
       </div>
     </>
