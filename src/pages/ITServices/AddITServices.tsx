@@ -18,8 +18,9 @@ interface ITServiceFormData {
 export default function AddITServices() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const parentId = state?.parentId || '68563d750ea11f5d6792298a';
+  const parentId = state?.parentId || '68563d750ea11f5d6792298a'; // Fallback to hardcoded ID
 
+  // State for form fields
   const [formData, setFormData] = useState<ITServiceFormData>({
     title: '',
     description: '',
@@ -28,12 +29,14 @@ export default function AddITServices() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Warn if parentId is missing
   React.useEffect(() => {
     if (!state?.parentId) {
       console.warn('parentId not provided; using fallback ID:', parentId);
     }
   }, [state, parentId]);
 
+  // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -72,13 +75,11 @@ export default function AddITServices() {
     setLoading(true);
     setError(null);
     try {
-     await ngrokAxiosInstance.post(`/serviceSection/${parentId}/itServices`, {
-  title: formData.title,
-  description: formData.description,
-  icon: formData.icon,
-});
-
-
+      await ngrokAxiosInstance.post(`/dynamic/serviceSection/${parentId}/itServices`, {
+        title: formData.title,
+        description: formData.description,
+        icon: formData.icon,
+      });
       alert('IT Service added successfully!');
       navigate(-1, { state: { refresh: true } }); // Signal refresh
     } catch (err: any) {
