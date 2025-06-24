@@ -9,8 +9,11 @@ import {
 import Badge from '../../components/ui/badge/Badge';
 import ngrokAxiosInstance from '../../hooks/axiosInstance';
 import Button from '../../components/ui/button/Button';
-import { MoreVertical } from 'lucide-react';
+import { MoreVertical, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router';
+import ComponentCard from '../../components/common/ComponentCard';
+import PageBreadcrumb from '../../components/common/PageBreadCrumb';
+import PageMeta from '../../components/common/PageMeta';
 
 // Define the Item interface for itServices and products
 interface Item {
@@ -38,9 +41,10 @@ interface TableItem extends Item {
   type: 'Service' | 'Product';
 }
 
-export default function ITServiceSectionTable() {
+export default function ServiceSectionTable() {
   const [items, setItems] = useState<TableItem[]>([]);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -48,6 +52,7 @@ export default function ITServiceSectionTable() {
   useEffect(() => {
     const fetchServiceSection = async () => {
       try {
+        setLoading(true);
         const response = await ngrokAxiosInstance.get('/dynamic/serviceSection');
         const data: ServiceSection = response.data;
         // Combine itServices and products into a single array with type
@@ -58,6 +63,8 @@ export default function ITServiceSectionTable() {
         setItems(combinedItems);
       } catch (error) {
         console.error('Error fetching service section:', error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchServiceSection();
@@ -82,7 +89,7 @@ export default function ITServiceSectionTable() {
   // Handle Edit action
   const handleEditClick = (item: TableItem) => {
     console.log('Edit item:', item);
-    navigate(`/it-services/edit/${item._id}`);
+    navigate(`/it-services/edit/${item.type.toLowerCase()}/${item._id}`);
     setActiveMenu(null);
   };
 
@@ -101,110 +108,157 @@ export default function ITServiceSectionTable() {
     setActiveMenu(null);
   };
 
- 
-  return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-      <div className="max-w-full overflow-x-auto">
-        <Table>
-          {/* Table Header */}
-          <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
-            <TableRow>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-              >
-                Sl.No
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-              >
-                Type
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-              >
-                Title
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-              >
-                Description
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-              >
-                Icon
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-              >
-                Actions
-              </TableCell>
-            </TableRow>
-          </TableHeader>
+  // Handle Create action
+  const handleCreateClick = () => {
+    navigate('/it-services/create');
+  };
 
-          {/* Table Body */}
-          <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-            {items.map((item, index) => (
-              <TableRow key={item._id}>
-                <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                  {index + 1}
-                </TableCell>
-                <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                  <Badge size="sm" color={item.type === 'Service' ? 'primary' : 'success'}>
-                    {item.type}
-                  </Badge>
-                </TableCell>
-                <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                  {item.title}
-                </TableCell>
-                <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                  {item.description}
-                </TableCell>
-                <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                  {item.icon}
-                </TableCell>
-                <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400 relative">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => toggleMenu(item._id)}
-                  >
-                    <MoreVertical className="size-5 text-gray-500 dark:text-gray-400" />
-                  </Button>
-                  {activeMenu === item._id && (
-                    <div
-                      ref={dropdownRef}
-                      className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-10"
-                    >
-                      <div className="py-2">
-                          
-                        <button
-                          className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                          onClick={() => handleEditClick(item)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                          onClick={() => handleDeleteClick(item)}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+  // Show loader while fetching data
+  if (loading) {
+    return (
+      <>
+        <PageMeta
+          title="React.js Service Section Dashboard | TailAdmin - Next.js Admin Dashboard Template"
+          description="This is React.js Service Section Dashboard page for TailAdmin - MN techs Admin Dashboard"
+        />
+        <div className="flex justify-between items-baseline mb-4">
+          <PageBreadcrumb pageTitle="Service Section" />
+        </div>
+        <div className="space-y-6">
+          <ComponentCard title="Service Section Table">
+            <div className="flex justify-center items-center h-64">
+              <Loader2 className="size-6 text-gray-500 animate-spin" />
+              <span className="ml-2 text-gray-500">Loading...</span>
+            </div>
+          </ComponentCard>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <PageMeta
+        title="React.js Service Section Dashboard | TailAdmin - Next.js Admin Dashboard Template"
+        description="This is React.js Service Section Dashboard page for TailAdmin - MN techs Admin Dashboard"
+      />
+      <div className="flex justify-between items-center mb-4">
+        <PageBreadcrumb pageTitle="Service Section" />
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={handleCreateClick}
+          className="px-4 py-2 text-black! border-gray-200 bg-white hover:bg-gray-50! border dark:border-gray-800"
+        >
+          Create New
+        </Button>
       </div>
-    </div>
+      <div className="space-y-6">
+        <ComponentCard title="Service Section Table">
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+            <div className="max-w-full overflow-x-auto">
+              <Table>
+                {/* Table Header */}
+                <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+                  <TableRow>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                    >
+                      Sl.No
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                    >
+                      Type
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                    >
+                      Title
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                    >
+                      Description
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                    >
+                      Icon
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                    >
+                      Actions
+                    </TableCell>
+                  </TableRow>
+                </TableHeader>
+
+                {/* Table Body */}
+                <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+                  {items.map((item, index) => (
+                    <TableRow key={item._id}>
+                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
+                        {index + 1}
+                      </TableCell>
+                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
+                        <Badge size="sm" color={item.type === 'Service' ? 'primary' : 'success'}>
+                          {item.type}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
+                        {item.title}
+                      </TableCell>
+                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
+                        {item.description}
+                      </TableCell>
+                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
+                        {item.icon}
+                      </TableCell>
+                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400 relative">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => toggleMenu(item._id)}
+                        >
+                          <MoreVertical className="size-5 text-gray-500 dark:text-gray-400" />
+                        </Button>
+                        {activeMenu === item._id && (
+                          <div
+                            ref={dropdownRef}
+                            className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-10"
+                          >
+                            <div className="py-2">
+                              <button
+                                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                onClick={() => handleEditClick(item)}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                onClick={() => handleDeleteClick(item)}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        </ComponentCard>
+      </div>
+    </>
   );
 }
