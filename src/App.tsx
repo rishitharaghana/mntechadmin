@@ -10,7 +10,7 @@ import Badges from "./pages/UiElements/Badges";
 import Avatars from "./pages/UiElements/Avatars";
 import Buttons from "./pages/UiElements/Buttons";
 
-
+import ContactUs from "./pages/Contact/ContactUs"
 import BasicTables from "./pages/Tables/BasicTables";
 import FormElements from "./pages/Forms/FormElements";
 import Blank from "./pages/Blank";
@@ -39,6 +39,7 @@ export default function App() {
            
             <Route path="/basic-tables" element={<BasicTables />} />
             <Route path="/reviews/edit/:id" element={<EditReview />} />
+            <Route path="/contact/contact_us" element={<ContactUs />} />
 
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/avatars" element={<Avatars />} />
