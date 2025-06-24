@@ -11,6 +11,9 @@ import {
 import Badge from "../../components/ui/badge/Badge";
 import ComponentCard from "../../components/common/ComponentCard";
 import Button from "../../components/ui/button/Button";
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import PageMeta from "../../components/common/PageMeta";
+
 interface Contact {
   _id: string;
   name: string;
@@ -88,141 +91,180 @@ export default function ContactList() {
   );
 
   if (loading) {
-    return <LoadingSpinner />;
+    return (
+      <>
+        <PageMeta
+          title="React.js Contact List Dashboard | TailAdmin - Next.js Admin Dashboard Template"
+          description="This is React.js Contact List Dashboard page for TailAdmin - MN techs Admin Dashboard"
+        />
+        <div className="flex justify-between items-baseline mb-4">
+          <PageBreadcrumb pageTitle="Contact List" />
+        </div>
+        <div className="space-y-6">
+          <ComponentCard title="Contact List">
+            <LoadingSpinner />
+          </ComponentCard>
+        </div>
+      </>
+    );
   }
 
   if (error) {
     return (
-      <div className="text-center text-red-500 dark:text-red-400 text-lg py-10">
-        {error}
-      </div>
+      <>
+        <PageMeta
+          title="React.js Contact List Dashboard | TailAdmin - Next.js Admin Dashboard Template"
+          description="This is React.js Contact List Dashboard page for TailAdmin - MN techs Admin Dashboard"
+        />
+        <div className="flex justify-between items-baseline mb-4">
+          <PageBreadcrumb pageTitle="Contact List" />
+        </div>
+        <div className="space-y-6">
+          <ComponentCard title="Contact List">
+            <div className="text-center text-red-500 dark:text-red-400 text-lg py-10">
+              {error}
+            </div>
+          </ComponentCard>
+        </div>
+      </>
     );
   }
 
   return (
-    <ComponentCard title="Contact List">
-      <div className="max-w-full overflow-x-auto">
-        <Table>
-          <TableHeader className="border-b border-gray-200 dark:border-gray-700">
-            <TableRow>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
-              >
-                Sl.No
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
-              >
-                Name
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
-              >
-                Email
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
-              >
-                Phone
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
-              >
-                Message
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
-              >
-                Agree to Updates
-              </TableCell>
-            </TableRow>
-          </TableHeader>
-          <TableBody className="divide-y divide-gray-200 dark:divide-gray-700">
-            {paginatedContacts.length > 0 ? (
-              paginatedContacts.map((contact, index) => (
-                <TableRow key={contact._id}>
-                  <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
-                    {startIndex + index + 1}
-                  </TableCell>
-                  <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
-                    {contact.name}
-                  </TableCell>
-                  <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
-                    {contact.email}
-                  </TableCell>
-                  <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
-                    {contact.phone || "N/A"}
-                  </TableCell>
-                  <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
-                    {contact.message || "N/A"}
-                  </TableCell>
-                  <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
-                    <Badge
-                      size="sm"
-                      color={contact.agreeToUpdates ? "primary" : "warning"}
-                    >
-                      {" "}
-                      {contact.agreeToUpdates ? "Yes" : "No"}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell className="px-5 py-4 text-center text-gray-600 text-sm dark:text-gray-400">
-                  No contacts found
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+    <>
+      <PageMeta
+        title="React.js Contact List Dashboard | TailAdmin - Next.js Admin Dashboard Template"
+        description="This is React.js Contact List Dashboard page for TailAdmin - MN techs Admin Dashboard"
+      />
+      <div className="flex justify-between items-center mb-4">
+        <PageBreadcrumb pageTitle="Contact List" />
       </div>
-
-      {totalPages > 1 && (
-        <div className="flex justify-between items-center mt-4 px-4 py-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-4 py-2 text-gray-700 dark:text-gray-200 disabled:opacity-50 rounded-md border border-gray-300 dark:border-gray-600"
-          >
-            Previous
-          </Button>
-          <div className="flex gap-2">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <Button
-                key={page}
-                variant={currentPage === page ? "primary" : "outline"}
-                size="sm"
-                onClick={() => handlePageChange(page)}
-                className={`px-3 py-1 text-sm rounded-md ${
-                  currentPage === page
-                    ? "bg-blue-500 text-white"
-                    : "text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600"
-                }`}
-              >
-                {page}
-              </Button>
-            ))}
+      <div className="space-y-6">
+        <ComponentCard title="Contact List">
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+            <div className="max-w-full overflow-x-auto">
+              <Table>
+                <TableHeader className="border-b border-gray-200 dark:border-gray-700">
+                  <TableRow>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
+                    >
+                      Sl.No
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
+                    >
+                      Name
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
+                    >
+                      Email
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
+                    >
+                      Phone
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
+                    >
+                      Message
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
+                    >
+                      Agree to Updates
+                    </TableCell>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {paginatedContacts.length > 0 ? (
+                    paginatedContacts.map((contact, index) => (
+                      <TableRow key={contact._id}>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
+                          {startIndex + index + 1}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
+                          {contact.name}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
+                          {contact.email}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
+                          {contact.phone || "N/A"}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
+                          {contact.message || "N/A"}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
+                          <Badge
+                            size="sm"
+                            color={contact.agreeToUpdates ? "primary" : "warning"}
+                          >
+                            {contact.agreeToUpdates ? "Yes" : "No"}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell className="px-5 py-4 text-center text-gray-600 text-sm dark:text-gray-400" colSpan={6}>
+                        No contacts found
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-4 py-2 text-gray-700 dark:text-gray-200 disabled:opacity-50 rounded-md border border-gray-300 dark:border-gray-600"
-          >
-            Next
-          </Button>
-        </div>
-      )}
-    </ComponentCard>
+          {totalPages > 1 && (
+            <div className="flex justify-between items-center mt-4 px-4 py-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-4 py-2 text-gray-700 dark:text-gray-200 disabled:opacity-50 rounded-md border border-gray-300 dark:border-gray-600"
+              >
+                Previous
+              </Button>
+              <div className="flex gap-2">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "primary" : "outline"}
+                    size="sm"
+                    onClick={() => handlePageChange(page)}
+                    className={`px-3 py-1 text-sm rounded-md ${
+                      currentPage === page
+                        ? "bg-blue-500 text-white"
+                        : "text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600"
+                    }`}
+                  >
+                    {page}
+                  </Button>
+                ))}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 text-gray-700 dark:text-gray-200 disabled:opacity-50 rounded-md border border-gray-300 dark:border-gray-600"
+              >
+                Next
+              </Button>
+            </div>
+          )}
+        </ComponentCard>
+      </div>
+    </>
   );
 }
