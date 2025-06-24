@@ -18,6 +18,13 @@ import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import EditReview from "./pages/Tables/EditReview";
+import Services from "./pages/Services/Services";
+import Skills from "./pages/skills/Skills";
+import EditSkills from "./pages/skills/Editskills";
+
+// import EditService from "./pages/Services/EditServices";
+import EditServices from "./pages/Services/EditServices"
+import AddSkills from "./pages/skills/Addskills";
 
 export default function App() {
   return (
@@ -39,6 +46,12 @@ export default function App() {
            
             <Route path="/basic-tables" element={<BasicTables />} />
             <Route path="/reviews/edit/:id" element={<EditReview />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/services/edit/:id" element={<EditServices />} />
+            <Route path="/skills/edit/:id" element={<EditSkills/>} />
+            <Route path="/skills/create" element={<AddSkills />} />
+            <Route path="/skills" element={<Skills />} />
+
 
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/avatars" element={<Avatars />} />

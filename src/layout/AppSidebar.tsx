@@ -6,7 +6,7 @@ import {
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
-  ListIcon,
+
   PageIcon,
   TableIcon,
   UserCircleIcon,
@@ -39,7 +39,11 @@ const navItems: NavItem[] = [
   {
     name: "Tables",
     icon: <TableIcon />,
-    subItems: [{ name: "Reviews", path: "/basic-tables", pro: false }],
+    subItems: [
+      { name: "Reviews", path: "/basic-tables", pro: false },
+      { name: "Services", path: "/services", pro: false },
+      { name: "Skills", path: "/skills", pro: false }
+    ],
   },
   {
     name: "Pages",
