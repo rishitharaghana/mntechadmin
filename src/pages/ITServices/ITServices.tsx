@@ -5,9 +5,8 @@ import {
   TableCell,
   TableHeader,
   TableRow,
-}
-from '../../components/ui/table';
-import Badge from'../../components/ui/badge/Badge';
+} from '../../components/ui/table';
+import Badge from '../../components/ui/badge/Badge';
 import ngrokAxiosInstance from '../../hooks/axiosInstance';
 import Button from '../../components/ui/button/Button';
 import { MoreVertical } from 'lucide-react';
@@ -102,6 +101,13 @@ export default function ServiceSectionTable() {
     setActiveMenu(null);
   };
 
+  // Handle Create action (duplicate with pre-filled data)
+  const handleCreateClick = (item: TableItem) => {
+    console.log('Create new item based on:', item);
+    navigate(`/it-services/create`, { state: { prefill: item } });
+    setActiveMenu(null);
+  };
+
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
@@ -183,6 +189,12 @@ export default function ServiceSectionTable() {
                       className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-10"
                     >
                       <div className="py-2">
+                        <button
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                          onClick={() => handleCreateClick(item)}
+                        >
+                          Create
+                        </button>
                         <button
                           className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                           onClick={() => handleEditClick(item)}
