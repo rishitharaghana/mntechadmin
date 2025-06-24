@@ -22,6 +22,7 @@ import AllEmployees from "./pages/Employees/AllEmployees";
 import EditEmployee from "./pages/Employees/EditEmployee";
 import ReachUsTable from "./pages/Reachus/Reachus";
 import NewsletterSubscribers from "./pages/NewsLetter/Newsltter";
+import ITServiceSectionTable from "./pages/ITServices/ITServices";
 import ProtectedRoute from "./hooks/protectedRoute";
 
 
@@ -36,6 +37,11 @@ export default function App() {
             <Route path="/profile" element={<UserProfiles />} />
             <Route path="/blank" element={<Blank />} />
             <Route path="/form-elements" element={<FormElements />} />
+
+            <Route path="/it-services" element={<ITServiceSectionTable />} />
+            {/* <Route path="/it-services/edit/:id" element={<EditITServices />} /> */}
+
+           
             <Route path="/basic-tables" element={<BasicTables />} />
             <Route path="/reviews/edit/:id" element={<EditReview />} />
             <Route path="/contact/contact_us" element={<ContactUs />} />

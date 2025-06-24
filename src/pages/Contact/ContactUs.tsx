@@ -1,10 +1,18 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router';
-import ngrokAxiosInstance from '../../hooks/axiosInstance';
-import ComponentCard from '../../components/common/ComponentCard';
-import Label from '../../components/form/Label';
-import Input from '../../components/form/input/InputField';
-import Button from '../../components/ui/button/Button';
+import React, { useState, useEffect } from "react";
+import ngrokAxiosInstance from "../../hooks/axiosInstance";
+import { AxiosError } from "axios";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "../../components/ui/table";
+import Badge from "../../components/ui/badge/Badge";
+import ComponentCard from "../../components/common/ComponentCard";
+import Button from "../../components/ui/button/Button";
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import PageMeta from "../../components/common/PageMeta";
 
 interface Contact {
   _id: string;
@@ -18,170 +26,245 @@ interface Contact {
   __v: number;
 }
 
-export default function EditContact() {
-  // Get contact ID from URL params
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+interface AxiosErrorResponse {
+  message?: string;
+}
 
-  // State for form fields
-  const [contact, setContact] = useState<Contact | null>(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    message: '',
-    agreeToUpdates: false,
-  });
-  const [error, setError] = useState<string | null>(null);
+export default function ContactList() {
+  const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  // Fetch contact data on component mount
   useEffect(() => {
-    const fetchContact = async () => {
+    const fetchContacts = async () => {
       try {
-        const response = await ngrokAxiosInstance.get(`/contact/contact_us`);
-        setContact(response.data);
-        setFormData({
-          name: response.data.name,
-          phone: response.data.phone,
-          email: response.data.email,
-          message: response.data.message,
-          agreeToUpdates: response.data.agreeToUpdates,
-        });
+        const response = await ngrokAxiosInstance.get("/contact/contact_us");
+        console.log("API Response:", response.data);
+        setContacts(
+          Array.isArray(response.data)
+            ? response.data
+            : response.data.data || []
+        );
       } catch (err) {
-        setError('Failed to fetch contact data');
-        console.error('Error fetching contact:', err);
+        const axiosError = err as AxiosError<AxiosErrorResponse>;
+        const errorMessage =
+          axiosError.response?.status === 404
+            ? "Contact endpoint not found (404). Please check the API URL."
+            : axiosError.response?.data?.message ||
+              axiosError.message ||
+              "Failed to fetch contact data";
+        setError(errorMessage);
+        console.error("Error fetching contacts:", {
+          message: axiosError.message,
+          status: axiosError.response?.status,
+          data: axiosError.response?.data,
+          url: axiosError.config?.url,
+        });
       } finally {
         setLoading(false);
       }
     };
-   
-      fetchContact();
-    
+    fetchContacts();
   }, []);
 
-  // Handle input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const totalItems = contacts.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedContacts = contacts.slice(startIndex, endIndex);
 
-  // Handle checkbox change
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, agreeToUpdates: e.target.checked }));
-  };
-
-  // Handle submit action
-  const handleSubmit = async () => {
-    try {
-      await ngrokAxiosInstance.put(`/contact/contact_us/${id}`, {
-        name: formData.name,
-        phone: formData.phone,
-        email: formData.email,
-        message: formData.message,
-        agreeToUpdates: formData.agreeToUpdates,
-      });
-      alert('Contact updated successfully!');
-      navigate(-1);
-    } catch (err) {
-      setError('Failed to update contact');
-      console.error('Error updating contact:', err);
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
     }
   };
 
-  // Handle cancel action
-  const handleCancel = () => {
-    navigate(-1);
-  };
+  const LoadingSpinner = () => (
+    <div className="flex justify-center items-center py-10">
+      <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      <span className="ml-4 text-gray-600 dark:text-gray-300 text-lg">
+        Loading contacts...
+      </span>
+    </div>
+  );
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <>
+        <PageMeta
+          title="React.js Contact List Dashboard | TailAdmin - Next.js Admin Dashboard Template"
+          description="This is React.js Contact List Dashboard page for TailAdmin - MN techs Admin Dashboard"
+        />
+        <div className="flex justify-between items-baseline mb-4">
+          <PageBreadcrumb pageTitle="Contact List" />
+        </div>
+        <div className="space-y-6">
+          <ComponentCard title="Contact List">
+            <LoadingSpinner />
+          </ComponentCard>
+        </div>
+      </>
+    );
   }
 
-  if (error || !contact) {
-    return <div>{error || 'Contact not found'}</div>;
+  if (error) {
+    return (
+      <>
+        <PageMeta
+          title="React.js Contact List Dashboard | TailAdmin - Next.js Admin Dashboard Template"
+          description="This is React.js Contact List Dashboard page for TailAdmin - MN techs Admin Dashboard"
+        />
+        <div className="flex justify-between items-baseline mb-4">
+          <PageBreadcrumb pageTitle="Contact List" />
+        </div>
+        <div className="space-y-6">
+          <ComponentCard title="Contact List">
+            <div className="text-center text-red-500 dark:text-red-400 text-lg py-10">
+              {error}
+            </div>
+          </ComponentCard>
+        </div>
+      </>
+    );
   }
 
   return (
-    <ComponentCard title="Edit Contact">
-      <div className="space-y-6">
-        <div>
-          <Label htmlFor="name">Name</Label>
-          <Input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            placeholder="Enter name"
-          />
-        </div>
-        <div>
-          <Label htmlFor="phone">Phone</Label>
-          <Input
-            type="text"
-            id="phone"
-            name="phone"
-            value={formData.phone}
-            onChange={handleInputChange}
-            placeholder="Enter phone number"
-          />
-        </div>
-        <div>
-          <Label htmlFor="email">Email</Label>
-          <Input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            placeholder="Enter email"
-          />
-        </div>
-        <div>
-          <Label htmlFor="message">Message</Label>
-          <textarea
-            id="message"
-            name="message"
-            value={formData.message}
-            onChange={handleInputChange}
-            placeholder="Enter message"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-dark-900 dark:border-gray-600 dark:text-gray-200"
-            rows={4}
-          />
-        </div>
-        <div className="flex items-center">
-          <Label htmlFor="agreeToUpdates" className="mr-2">Agree to Updates</Label>
-          <input
-            type="checkbox"
-            id="agreeToUpdates"
-            name="agreeToUpdates"
-            checked={formData.agreeToUpdates}
-            onChange={handleCheckboxChange}
-            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:bg-dark-900 dark:border-gray-600"
-          />
-          <span className="ml-2 text-sm text-gray-700 dark:text-gray-200">Receive updates</span>
-        </div>
-        {error && (
-          <div className="text-red-500 text-sm">{error}</div>
-        )}
-        <div className="flex gap-4">
-          <Button
-            variant="outline"
-            onClick={handleCancel}
-            className="px-4 py-2 text-gray-700 dark:text-gray-200"
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="primary"
-            onClick={handleSubmit}
-            className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700"
-          >
-            Submit
-          </Button>
-        </div>
+    <>
+      <PageMeta
+        title="React.js Contact List Dashboard | TailAdmin - Next.js Admin Dashboard Template"
+        description="This is React.js Contact List Dashboard page for TailAdmin - MN techs Admin Dashboard"
+      />
+      <div className="flex justify-between items-center mb-4">
+        <PageBreadcrumb pageTitle="Contact List" />
       </div>
-    </ComponentCard>
+      <div className="space-y-6">
+        <ComponentCard title="Contact List">
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+            <div className="max-w-full overflow-x-auto">
+              <Table>
+                <TableHeader className="border-b border-gray-200 dark:border-gray-700">
+                  <TableRow>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
+                    >
+                      Sl.No
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
+                    >
+                      Name
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
+                    >
+                      Email
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
+                    >
+                      Phone
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
+                    >
+                      Message
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
+                    >
+                      Agree to Updates
+                    </TableCell>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {paginatedContacts.length > 0 ? (
+                    paginatedContacts.map((contact, index) => (
+                      <TableRow key={contact._id}>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
+                          {startIndex + index + 1}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
+                          {contact.name}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
+                          {contact.email}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
+                          {contact.phone || "N/A"}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
+                          {contact.message || "N/A"}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
+                          <Badge
+                            size="sm"
+                            color={contact.agreeToUpdates ? "primary" : "warning"}
+                          >
+                            {contact.agreeToUpdates ? "Yes" : "No"}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell className="px-5 py-4 text-center text-gray-600 text-sm dark:text-gray-400" colSpan={6}>
+                        No contacts found
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+          {totalPages > 1 && (
+            <div className="flex justify-between items-center mt-4 px-4 py-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-4 py-2 text-gray-700 dark:text-gray-200 disabled:opacity-50 rounded-md border border-gray-300 dark:border-gray-600"
+              >
+                Previous
+              </Button>
+              <div className="flex gap-2">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "primary" : "outline"}
+                    size="sm"
+                    onClick={() => handlePageChange(page)}
+                    className={`px-3 py-1 text-sm rounded-md ${
+                      currentPage === page
+                        ? "bg-blue-500 text-white"
+                        : "text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600"
+                    }`}
+                  >
+                    {page}
+                  </Button>
+                ))}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 text-gray-700 dark:text-gray-200 disabled:opacity-50 rounded-md border border-gray-300 dark:border-gray-600"
+              >
+                Next
+              </Button>
+            </div>
+          )}
+        </ComponentCard>
+      </div>
+    </>
   );
 }
