@@ -10,9 +10,10 @@ import {
 } from "../../components/ui/table";
 import Badge from "../../components/ui/badge/Badge";
 import ComponentCard from "../../components/common/ComponentCard";
-import Button from "../../components/ui/button/Button"; // Verify path
+import Button from "../../components/ui/button/Button";
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import PageMeta from "../../components/common/PageMeta";
 
-// Define the Contact interface
 interface Contact {
   _id: string;
   name: string;
@@ -90,14 +91,42 @@ export default function ContactList() {
   );
 
   if (loading) {
-    return <LoadingSpinner />;
+    return (
+      <>
+        <PageMeta
+          title="React.js Contact List Dashboard | TailAdmin - Next.js Admin Dashboard Template"
+          description="This is React.js Contact List Dashboard page for TailAdmin - MN techs Admin Dashboard"
+        />
+        <div className="flex justify-between items-baseline mb-4">
+          <PageBreadcrumb pageTitle="Contact List" />
+        </div>
+        <div className="space-y-6">
+          <ComponentCard title="Contact List">
+            <LoadingSpinner />
+          </ComponentCard>
+        </div>
+      </>
+    );
   }
 
   if (error) {
     return (
-      <div className="text-center text-red-500 dark:text-red-400 text-lg py-10">
-        {error}
-      </div>
+      <>
+        <PageMeta
+          title="React.js Contact List Dashboard | TailAdmin - Next.js Admin Dashboard Template"
+          description="This is React.js Contact List Dashboard page for TailAdmin - MN techs Admin Dashboard"
+        />
+        <div className="flex justify-between items-baseline mb-4">
+          <PageBreadcrumb pageTitle="Contact List" />
+        </div>
+        <div className="space-y-6">
+          <ComponentCard title="Contact List">
+            <div className="text-center text-red-500 dark:text-red-400 text-lg py-10">
+              {error}
+            </div>
+          </ComponentCard>
+        </div>
+      </>
     );
   }
 
@@ -165,7 +194,11 @@ export default function ContactList() {
                     {contact.message || "N/A"}
                   </TableCell>
                   <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
-                    <Badge size="sm" color={contact.agreeToUpdates ? "success" : "warning"}>
+                    <Badge
+                      size="sm"
+                      color={contact.agreeToUpdates ? "primary" : "warning"}
+                    >
+                      {" "}
                       {contact.agreeToUpdates ? "Yes" : "No"}
                     </Badge>
                   </TableCell>
@@ -173,9 +206,7 @@ export default function ContactList() {
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  className="px-5 py-4 text-center text-gray-600 text-sm dark:text-gray-400"
-                >
+                <TableCell className="px-5 py-4 text-center text-gray-600 text-sm dark:text-gray-400">
                   No contacts found
                 </TableCell>
               </TableRow>
@@ -184,7 +215,6 @@ export default function ContactList() {
         </Table>
       </div>
 
-      {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="flex justify-between items-center mt-4 px-4 py-2">
           <Button

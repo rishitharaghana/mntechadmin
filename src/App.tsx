@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import SignIn from "./pages/AuthPages/SignIn";
-import SignUp from "./pages/AuthPages/SignUp";
+
 import NotFound from "./pages/OtherPage/NotFound";
 import UserProfiles from "./pages/UserProfiles";
 import Videos from "./pages/UiElements/Videos";
@@ -22,35 +22,33 @@ import AllEmployees from "./pages/Employees/AllEmployees";
 import EditEmployee from "./pages/Employees/EditEmployee";
 import ReachUsTable from "./pages/Reachus/Reachus";
 import NewsletterSubscribers from "./pages/NewsLetter/Newsltter";
+import ITServiceSectionTable from "./pages/ITServices/ITServices";
+import ProtectedRoute from "./hooks/protectedRoute";
 
 
 export default function App() {
   return (
-    <>
-      <Router>
-        <ScrollToTop />
-        <Routes>
-  
+    <Router>
+      <ScrollToTop />
+      <Routes>
+        <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
-
-        
             <Route path="/profile" element={<UserProfiles />} />
-           
             <Route path="/blank" element={<Blank />} />
-
             <Route path="/form-elements" element={<FormElements />} />
+
+            <Route path="/it-services" element={<ITServiceSectionTable />} />
+            {/* <Route path="/it-services/edit/:id" element={<EditITServices />} /> */}
 
            
             <Route path="/basic-tables" element={<BasicTables />} />
             <Route path="/reviews/edit/:id" element={<EditReview />} />
             <Route path="/contact/contact_us" element={<ContactUs />} />
-            <Route path="/employees" element={<AllEmployees/>}/>
+            <Route path="/employees" element={<AllEmployees />} />
             <Route path="/employees/edit/:id" element={<EditEmployee />} />
-            <Route path="/reachus" element={<ReachUsTable/>}/>
-            <Route path="//news-letter" element={<NewsletterSubscribers/>}/>
-          
-
+            <Route path="/reachus" element={<ReachUsTable />} />
+            <Route path="/news-letter" element={<NewsletterSubscribers />} />
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/avatars" element={<Avatars />} />
             <Route path="/badge" element={<Badges />} />
@@ -58,13 +56,10 @@ export default function App() {
             <Route path="/images" element={<Images />} />
             <Route path="/videos" element={<Videos />} />
           </Route>
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-
-        
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
-    </>
+        </Route>
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   );
 }
