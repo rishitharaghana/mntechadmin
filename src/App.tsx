@@ -22,8 +22,15 @@ import AllEmployees from "./pages/Employees/AllEmployees";
 import EditEmployee from "./pages/Employees/EditEmployee";
 import ReachUsTable from "./pages/Reachus/Reachus";
 import NewsletterSubscribers from "./pages/NewsLetter/Newsltter";
+import ProtectedRoute from "./hooks/protectedRoute";
+import Services from "./pages/Services/Services";
+import EditServices from "./pages/Services/EditServices"
+import AddSkills from "./pages/skills/Addskills";
+import EditSkills from "./pages/skills/Editskills";
+import Skills from "./pages/skills/Skills";
+import Addservices from "./pages/Services/Addservices";
 
->>>>>>> 5a927bc631cc65787737ef60eb2b575e9bb555e4
+
 
 export default function App() {
   return (
@@ -41,22 +48,27 @@ export default function App() {
             {/* <Route path="/it-services" element={<ITServiceSectionTable />}/>
            <Route path="/it-services/edit/:id" element={<EditITServices />}/> */}
 
-            <Route path="/it-services" element={<ITServiceSectionTable />} />
+            {/* <Route path="/it-services" element={<ITServiceSectionTable />} /> */}
             {/* <Route path="/it-services/edit/:id" element={<EditITServices />} /> */}
 
            
             <Route path="/basic-tables" element={<BasicTables />} />
             <Route path="/reviews/edit/:id" element={<EditReview />} />
             <Route path="/contact/contact_us" element={<ContactUs />} />
-<<<<<<< HEAD
-            <Route path="/newLetter/all" element={<SubscriberList />} />
-=======
+            {/* <Route path="/newLetter/all" element={<SubscriberList />} /> */}
             <Route path="/employees" element={<AllEmployees/>}/>
             <Route path="/employees/edit/:id" element={<EditEmployee />} />
             <Route path="/reachus" element={<ReachUsTable/>}/>
-            <Route path="//news-letter" element={<NewsletterSubscribers/>}/>
+            <Route path="/news-letter" element={<NewsletterSubscribers/>}/>
+            <Route path="/services" element={<Services/>}/>
+           
+            <Route path="/services/edit/:id" element={<EditServices />} />
+            <Route path="/skills" element={<Skills/>}/>
+            <Route path="/skills/edit/:id" element={<EditSkills />} />
+            <Route path="/skills/create" element={<AddSkills/>} />
           
->>>>>>> 5a927bc631cc65787737ef60eb2b575e9bb555e4
+            <Route path="/services/create" element={<Addservices />} />
+          
 
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/avatars" element={<Avatars />} />
