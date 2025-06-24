@@ -35,13 +35,16 @@ const navItems: NavItem[] = [
     name: "Content",
     icon: <TableIcon />,
     subItems: [
-     
-      { name: "Contact", path: "/contact/contact_us", pro: false },      
+      { name: "Subscriber", path: "/newsLetter/all", pro: false },
+      
       { name: "Employees", path: "/employees", pro: false },
+      { name: "IT Services", path: "/it-services", pro: false },
        { name: "Reach Us", path: "/reachus", pro: false },
          { name: "News Letter", path: "/news-letter", pro: false },
          { name: "Services", path: "/services", pro: false },
        { name: "Skills", path: "/skills", pro: false },
+       { name: "Reviews", path: "/basic-tables", pro: false },
+       { name: "Contact", path: "/contact/contact_us", pro: false },
 
     
 
