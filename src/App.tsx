@@ -53,7 +53,7 @@ export default function App() {
             <Route path="/basic-tables" element={<BasicTables />} />
             <Route path="/reviews/edit/:id" element={<EditReview />} />
             <Route path="/contact/contact_us" element={<ContactUs />} />
-            {/* <Route path="/newLetter/all" element={<SubscriberList />} /> */}
+            <Route path="/newLetter/all" element={<NewsletterSubscribers />} />
             <Route path="/employees" element={<AllEmployees/>}/>
             <Route path="/employees/edit/:id" element={<EditEmployee />} />
             <Route path="/reachus" element={<ReachUsTable/>}/>
