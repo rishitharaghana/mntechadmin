@@ -43,7 +43,7 @@ const navItems: NavItem[] = [
       { name: "Reach Us", path: "/reachus", pro: false },
       { name: "News Letter", path: "/news-letter", pro: false },
        { name: "Reach Us", path: "/reachus", pro: false },
-       { name: "News Letter", path: "/news-letter", pro: false },
+      
 
     
 
