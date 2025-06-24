@@ -83,7 +83,7 @@ export default function ServiceSectionTable() {
   // Handle Edit action
   const handleEditClick = (item: TableItem) => {
     console.log('Edit item:', item);
-    navigate(`/serviceSection/edit/${item.type.toLowerCase()}/${item._id}`);
+    navigate(`/it-services/edit/${item.type.toLowerCase()}/${item._id}`);
     setActiveMenu(null);
   };
 

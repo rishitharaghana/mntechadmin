@@ -100,62 +100,62 @@ export default function EditIISevices() {
   }
 
   return (
-    <ComponentCard title={`Edit ${type.charAt(0).toUpperCase() + type.slice(1)}`}>
-      <div className="space-y-6">
-        <div>
-          <Label htmlFor="title">Title</Label>
-          <Input
-            type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            placeholder="Enter title"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-dark-900 dark:border-gray-600 dark:text-gray-200"
-          />
-        </div>
-        <div>
-          <Label htmlFor="description">Description</Label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            placeholder="Enter description"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-dark-900 dark:border-gray-600 dark:text-gray-200"
-            rows={5}
-          />
-        </div>
-        <div>
-          <Label htmlFor="icon">Icon</Label>
-          <Input
-            type="text"
-            id="icon"
-            name="icon"
-            value={formData.icon}
-            onChange={handleInputChange}
-            placeholder="Enter icon name (e.g., Cloud)"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-dark-900 dark:border-gray-600 dark:text-gray-200"
-          />
-        </div>
-        {error && <div className="text-red-500 text-sm">{error}</div>}
-        <div className="flex gap-4">
-          <Button
-            variant="outline"
-            onClick={handleCancel}
-            className="px-4 py-2 text-gray-700 dark:text-gray-200"
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="primary"
-            onClick={handleSubmit}
-            className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700"
-          >
-            Submit
-          </Button>
-        </div>
+  <ComponentCard title={`Edit ${(type as string).charAt(0).toUpperCase() + (type as string).slice(1)}`}>
+    <div className="space-y-6">
+      <div>
+        <Label htmlFor="title">Title</Label>
+        <Input
+          type="text"
+          id="title"
+          name="title"
+          value={formData.title}
+          onChange={handleInputChange}
+          placeholder="Enter title"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-dark-900 dark:border-gray-600 dark:text-gray-200"
+        />
       </div>
-    </ComponentCard>
-  );
+      <div>
+        <Label htmlFor="description">Description</Label>
+        <textarea
+          id="description"
+          name="description"
+          value={formData.description}
+          onChange={handleInputChange}
+          placeholder="Enter description"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-dark-900 dark:border-gray-600 dark:text-gray-200"
+          rows={5}
+        />
+      </div>
+      <div>
+        <Label htmlFor="icon">Icon</Label>
+        <Input
+          type="text"
+          id="icon"
+          name="icon"
+          value={formData.icon}
+          onChange={handleInputChange}
+          placeholder="Enter icon name (e.g., Cloud)"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-dark-900 dark:border-gray-600 dark:text-gray-200"
+        />
+      </div>
+      {error && <div className="text-red-500 text-sm">{error}</div>}
+      <div className="flex gap-4">
+        <Button
+          variant="outline"
+          onClick={handleCancel}
+          className="px-4 py-2 text-gray-700 dark:text-gray-200"
+        >
+          Cancel
+        </Button>
+        <Button
+          variant="primary"
+          onClick={handleSubmit}
+          className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700"
+        >
+          Submit
+        </Button>
+      </div>
+    </div>
+  </ComponentCard>
+);
 }

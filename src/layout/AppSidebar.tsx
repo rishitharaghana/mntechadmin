@@ -6,7 +6,6 @@ import {
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
-  ListIcon,
   PageIcon,
   TableIcon,
   UserCircleIcon,
@@ -42,6 +41,7 @@ const navItems: NavItem[] = [
     subItems: [
       { name: "Reviews", path: "/basic-tables", pro: false },
       { name: "IT Services", path: "/it-services", pro: false }
+
     ],
   },
   {
