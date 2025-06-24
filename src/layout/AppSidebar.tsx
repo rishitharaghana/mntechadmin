@@ -35,10 +35,8 @@ const navItems: NavItem[] = [
     name: "Content",
     icon: <TableIcon />,
     subItems: [
-      { name: "Reviews", path: "/basic-tables", pro: false },
-      { name: "Contact", path: "/contact/contact_us", pro: false },
      
-      
+      { name: "Contact", path: "/contact/contact_us", pro: false },      
       { name: "Employees", path: "/employees", pro: false },
        { name: "Reach Us", path: "/reachus", pro: false },
          { name: "News Letter", path: "/news-letter", pro: false },
