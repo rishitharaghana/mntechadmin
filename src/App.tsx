@@ -29,6 +29,8 @@ import AddSkills from "./pages/skills/Addskills";
 import EditSkills from "./pages/skills/Editskills";
 import Skills from "./pages/skills/Skills";
 import Addservices from "./pages/Services/Addservices";
+import ITServices from "./pages/ITServices/ITServices";
+import EditITServices from "./pages/ITServices/EditITServices"
 
 
 
@@ -45,12 +47,8 @@ export default function App() {
             <Route path="/form-elements" element={<FormElements />} />
            
 
-            {/* <Route path="/it-services" element={<ITServiceSectionTable />}/>
-           <Route path="/it-services/edit/:id" element={<EditITServices />}/> */}
-
-            {/* <Route path="/it-services" element={<ITServiceSectionTable />} /> */}
-            {/* <Route path="/it-services/edit/:id" element={<EditITServices />} /> */}
-
+            <Route path="/it-services" element={<ITServices />}/>
+           <Route path="/it-services/edit/:id" element={<EditITServices />}/>
            
             <Route path="/basic-tables" element={<BasicTables />} />
             <Route path="/reviews/edit/:id" element={<EditReview />} />
