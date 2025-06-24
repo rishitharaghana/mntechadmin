@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import SignIn from "./pages/AuthPages/SignIn";
-import SignUp from "./pages/AuthPages/SignUp";
+
 import NotFound from "./pages/OtherPage/NotFound";
 import UserProfiles from "./pages/UserProfiles";
 import Videos from "./pages/UiElements/Videos";
@@ -22,53 +22,41 @@ import AllEmployees from "./pages/Employees/AllEmployees";
 import EditEmployee from "./pages/Employees/EditEmployee";
 import ReachUsTable from "./pages/Reachus/Reachus";
 import NewsletterSubscribers from "./pages/NewsLetter/Newsltter";
-// import ITServiceSectionTable from "./pages/";
-import Services from "./pages/Services/Services";
-import EditServices from "./pages/Services/EditServices"
-import AddSkills from "./pages/skills/Addskills";
-import EditSkills from "./pages/skills/Editskills";
-import Skills from "./pages/skills/Skills";
-import Addservices from "./pages/Services/Addservices";
 
+>>>>>>> 5a927bc631cc65787737ef60eb2b575e9bb555e4
 
 export default function App() {
   return (
-    <>
-      <Router>
-        <ScrollToTop />
-        <Routes>
-  
+    <Router>
+      <ScrollToTop />
+      <Routes>
+        <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
-
-        
             <Route path="/profile" element={<UserProfiles />} />
-           
             <Route path="/blank" element={<Blank />} />
-
             <Route path="/form-elements" element={<FormElements />} />
            
 
             {/* <Route path="/it-services" element={<ITServiceSectionTable />}/>
            <Route path="/it-services/edit/:id" element={<EditITServices />}/> */}
 
+            <Route path="/it-services" element={<ITServiceSectionTable />} />
+            {/* <Route path="/it-services/edit/:id" element={<EditITServices />} /> */}
+
            
             <Route path="/basic-tables" element={<BasicTables />} />
             <Route path="/reviews/edit/:id" element={<EditReview />} />
             <Route path="/contact/contact_us" element={<ContactUs />} />
+<<<<<<< HEAD
+            <Route path="/newLetter/all" element={<SubscriberList />} />
+=======
             <Route path="/employees" element={<AllEmployees/>}/>
             <Route path="/employees/edit/:id" element={<EditEmployee />} />
             <Route path="/reachus" element={<ReachUsTable/>}/>
             <Route path="//news-letter" element={<NewsletterSubscribers/>}/>
-            <Route path="/services" element={<Services/>}/>
-           
-            <Route path="/services/edit/:id" element={<EditServices />} />
-            <Route path="/skills" element={<Skills/>}/>
-            <Route path="/skills/edit/:id" element={<EditSkills />} />
-            <Route path="/skills/create" element={<AddSkills/>} />
           
-            <Route path="/services/create" element={<Addservices />} />
-          
+>>>>>>> 5a927bc631cc65787737ef60eb2b575e9bb555e4
 
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/avatars" element={<Avatars />} />
@@ -77,13 +65,10 @@ export default function App() {
             <Route path="/images" element={<Images />} />
             <Route path="/videos" element={<Videos />} />
           </Route>
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-
-        
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
-    </>
+        </Route>
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   );
 }
