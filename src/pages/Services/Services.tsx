@@ -93,18 +93,24 @@ export default function ServicesTable() {
   };
 
   // Handle Delete action
-  const handleDeleteClick = async (service: IndividualService) => {
-    if (window.confirm('Are you sure you want to delete this service?')) {
-      try {
-        await ngrokAxiosInstance.delete(`/dynamic/service/service/${service._id}`);
-        setIndividualServices(individualServices.filter((s) => s._id !== service._id));
-        console.log('Service deleted:', service._id);
-      } catch (error) {
-        console.error('Error deleting service:', error);
+  // Handle Delete action
+const handleDeleteClick = async (service: IndividualService) => {
+  if (window.confirm('Are you sure you want to delete this service?')) {
+    try {
+      if (!parentId) {
+        throw new Error('Parent ID is not available');
       }
+      // Use the correct API endpoint with parentId and itemId
+      await ngrokAxiosInstance.delete(`/dynamic/service/${parentId}/service-item/${service._id}`);
+      // Update the state to remove the deleted service
+      setIndividualServices(individualServices.filter((s) => s._id !== service._id));
+      console.log('Service item deleted:', service._id);
+    } catch (error) {
+      console.error('Error deleting service item:', error);
     }
     setActiveMenu(null);
-  };
+  }
+};
 
   // Show loader while fetching data
   if (loading) {
