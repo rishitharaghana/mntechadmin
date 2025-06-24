@@ -38,7 +38,7 @@ interface TableItem extends Item {
   type: 'Service' | 'Product';
 }
 
-export default function ServiceSectionTable() {
+export default function ITServiceSectionTable() {
   const [items, setItems] = useState<TableItem[]>([]);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);

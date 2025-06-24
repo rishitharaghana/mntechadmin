@@ -18,8 +18,12 @@ import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import EditReview from "./pages/Tables/EditReview";
-import ITServices from "./pages/ITServices/ITServices";
-import EditITServices from "./pages/ITServices/EditITServices"
+import AllEmployees from "./pages/Employees/AllEmployees";
+import EditEmployee from "./pages/Employees/EditEmployee";
+import ReachUsTable from "./pages/Reachus/Reachus";
+import NewsletterSubscribers from "./pages/NewsLetter/Newsltter";
+import ITServiceSectionTable from "./pages/ITServices/ITServices";
+
 
 export default function App() {
   return (
@@ -38,13 +42,18 @@ export default function App() {
 
             <Route path="/form-elements" element={<FormElements />} />
 
-            <Route path="/it-services" element={<ITServices />} />
-            <Route path="/it-services/edit/:id" element={<EditITServices />} />
+            <Route path="/it-services" element={<ITServiceSectionTable />} />
+            {/* <Route path="/it-services/edit/:id" element={<EditITServices />} /> */}
 
            
             <Route path="/basic-tables" element={<BasicTables />} />
             <Route path="/reviews/edit/:id" element={<EditReview />} />
             <Route path="/contact/contact_us" element={<ContactUs />} />
+            <Route path="/employees" element={<AllEmployees/>}/>
+            <Route path="/employees/edit/:id" element={<EditEmployee />} />
+            <Route path="/reachus" element={<ReachUsTable/>}/>
+            <Route path="//news-letter" element={<NewsletterSubscribers/>}/>
+          
 
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/avatars" element={<Avatars />} />
