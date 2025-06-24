@@ -6,7 +6,7 @@ import {
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
-  PageIcon,
+  
   TableIcon,
   UserCircleIcon,
 } from "../icons";
@@ -23,41 +23,31 @@ const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Dashboard",
-    subItems: [{ name: "Ecommerce", path: "/", pro: false }],
+    path:"/"
+  
   },
   {
     icon: <UserCircleIcon />,
     name: "User Profile",
     path: "/profile",
   },
-  // {
-  //   name: "Forms",
-  //   icon: <ListIcon />,
-  //   subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
-  // },
+ 
   {
-    name: "Tables",
+    name: "Content",
     icon: <TableIcon />,
     subItems: [
       { name: "Reviews", path: "/basic-tables", pro: false },
       { name: "Contact", path: "/contact/contact_us", pro: false },
       { name: "Employees", path: "/employees", pro: false },
-       { name: "Reach Us", path: "/reachus", pro: false },
-         { name: "News Letter", path: "/news-letter", pro: false },
+      { name: "Reach Us", path: "/reachus", pro: false },
+      { name: "News Letter", path: "/news-letter", pro: false },
 
     
 
     ],
     
   },
-  {
-    name: "Pages",
-    icon: <PageIcon />,
-    subItems: [
-      { name: "Blank Page", path: "/blank", pro: false },
-      { name: "404 Error", path: "/error-404", pro: false },
-    ],
-  },
+  
 ];
 
 

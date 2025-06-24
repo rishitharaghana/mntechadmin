@@ -7,7 +7,7 @@ import ComponentCard from '../../components/common/ComponentCard';
 import PageBreadcrumb from '../../components/common/PageBreadCrumb';
 import PageMeta from '../../components/common/PageMeta';
 
-// Define the NewsletterSubscriber interface based on the API data structure
+
 interface NewsletterSubscriber {
   _id: string;
   email: string;
@@ -18,8 +18,8 @@ interface NewsletterSubscriber {
 
 export default function NewsletterSubscribers() {
   const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>([]);
-  const [loading, setLoading] = useState<boolean>(true); // State for fetching loader
-  const [currentPage, setCurrentPage] = useState<number>(1); // State for pagination
+  const [loading, setLoading] = useState<boolean>(true); 
+  const [currentPage, setCurrentPage] = useState<number>(1); 
   const itemsPerPage = 10; // 10 rows per page
 
   // Fetch data from the API
