@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"; // Explicit React import for JSX
 import ngrokAxiosInstance from "../../hooks/axiosInstance";
-import { AxiosError } from "axios";
+import { AxiosError } from "axios"; // Import AxiosError
 import {
   Table,
   TableBody,
@@ -10,7 +10,9 @@ import {
 } from "../../components/ui/table";
 import Badge from "../../components/ui/badge/Badge";
 import ComponentCard from "../../components/common/ComponentCard";
-import Button from "../../components/ui/button/Button";
+import Button from "../../components/ui/button/Button"; // Verify path
+
+// Define the Contact interface
 interface Contact {
   _id: string;
   name: string;
@@ -23,6 +25,7 @@ interface Contact {
   __v: number;
 }
 
+// Define Axios error response shape
 interface AxiosErrorResponse {
   message?: string;
 }
@@ -32,32 +35,30 @@ export default function ContactList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 10; // 10 contacts per page
 
+  // Fetch contact data on component mount
   useEffect(() => {
     const fetchContacts = async () => {
       try {
         const response = await ngrokAxiosInstance.get("/contact/contact_us");
-        console.log("API Response:", response.data);
-        setContacts(
-          Array.isArray(response.data)
-            ? response.data
-            : response.data.data || []
-        );
+        console.log("API Response:", response.data); // Debug response
+        setContacts(Array.isArray(response.data) ? response.data : response.data.data || []);
       } catch (err) {
         const axiosError = err as AxiosError<AxiosErrorResponse>;
         const errorMessage =
           axiosError.response?.status === 404
             ? "Contact endpoint not found (404). Please check the API URL."
-            : axiosError.response?.data?.message ||
-              axiosError.message ||
-              "Failed to fetch contact data";
+            : axiosError.code === "ERR_NETWORK"
+            ? "CORS error: The server may not be configured to allow cross-origin requests from this origin."
+            : axiosError.response?.data?.message || axiosError.message || "Failed to fetch contact data";
         setError(errorMessage);
         console.error("Error fetching contacts:", {
           message: axiosError.message,
           status: axiosError.response?.status,
           data: axiosError.response?.data,
           url: axiosError.config?.url,
+          code: axiosError.code,
         });
       } finally {
         setLoading(false);
@@ -66,24 +67,25 @@ export default function ContactList() {
     fetchContacts();
   }, []);
 
+  // Calculate pagination values
   const totalItems = contacts.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedContacts = contacts.slice(startIndex, endIndex);
 
+  // Handle page navigation
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
   };
 
+  // Loading spinner component
   const LoadingSpinner = () => (
     <div className="flex justify-center items-center py-10">
       <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-      <span className="ml-4 text-gray-600 dark:text-gray-300 text-lg">
-        Loading contacts...
-      </span>
+      <span className="ml-4 text-gray-600 dark:text-gray-300 text-lg">Loading contacts...</span>
     </div>
   );
 
@@ -163,11 +165,7 @@ export default function ContactList() {
                     {contact.message || "N/A"}
                   </TableCell>
                   <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
-                    <Badge
-                      size="sm"
-                      color={contact.agreeToUpdates ? "primary" : "warning"}
-                    >
-                      {" "}
+                    <Badge size="sm" color={contact.agreeToUpdates ? "success" : "warning"}>
                       {contact.agreeToUpdates ? "Yes" : "No"}
                     </Badge>
                   </TableCell>
@@ -175,7 +173,9 @@ export default function ContactList() {
               ))
             ) : (
               <TableRow>
-                <TableCell className="px-5 py-4 text-center text-gray-600 text-sm dark:text-gray-400">
+                <TableCell
+                  className="px-5 py-4 text-center text-gray-600 text-sm dark:text-gray-400"
+                >
                   No contacts found
                 </TableCell>
               </TableRow>
@@ -184,6 +184,7 @@ export default function ContactList() {
         </Table>
       </div>
 
+      {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="flex justify-between items-center mt-4 px-4 py-2">
           <Button
