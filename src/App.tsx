@@ -10,7 +10,7 @@ import Badges from "./pages/UiElements/Badges";
 import Avatars from "./pages/UiElements/Avatars";
 import Buttons from "./pages/UiElements/Buttons";
 
-
+import ContactUs from "./pages/Contact/ContactUs"
 import BasicTables from "./pages/Tables/BasicTables";
 import FormElements from "./pages/Forms/FormElements";
 import Blank from "./pages/Blank";
@@ -18,13 +18,18 @@ import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import EditReview from "./pages/Tables/EditReview";
+import AllEmployees from "./pages/Employees/AllEmployees";
+import EditEmployee from "./pages/Employees/EditEmployee";
+import ReachUsTable from "./pages/Reachus/Reachus";
+import NewsletterSubscribers from "./pages/NewsLetter/Newsltter";
+// import ITServiceSectionTable from "./pages/";
 import Services from "./pages/Services/Services";
-import Skills from "./pages/skills/Skills";
-import EditSkills from "./pages/skills/Editskills";
-
-// import EditService from "./pages/Services/EditServices";
 import EditServices from "./pages/Services/EditServices"
 import AddSkills from "./pages/skills/Addskills";
+import EditSkills from "./pages/skills/Editskills";
+import Skills from "./pages/skills/Skills";
+import Addservices from "./pages/Services/Addservices";
+
 
 export default function App() {
   return (
@@ -42,16 +47,28 @@ export default function App() {
             <Route path="/blank" element={<Blank />} />
 
             <Route path="/form-elements" element={<FormElements />} />
+           
+
+            {/* <Route path="/it-services" element={<ITServiceSectionTable />}/>
+           <Route path="/it-services/edit/:id" element={<EditITServices />}/> */}
 
            
             <Route path="/basic-tables" element={<BasicTables />} />
             <Route path="/reviews/edit/:id" element={<EditReview />} />
-            <Route path="/services" element={<Services />} />
+            <Route path="/contact/contact_us" element={<ContactUs />} />
+            <Route path="/employees" element={<AllEmployees/>}/>
+            <Route path="/employees/edit/:id" element={<EditEmployee />} />
+            <Route path="/reachus" element={<ReachUsTable/>}/>
+            <Route path="//news-letter" element={<NewsletterSubscribers/>}/>
+            <Route path="/services" element={<Services/>}/>
+           
             <Route path="/services/edit/:id" element={<EditServices />} />
-            <Route path="/skills/edit/:id" element={<EditSkills/>} />
-            <Route path="/skills/create" element={<AddSkills />} />
-            <Route path="/skills" element={<Skills />} />
-
+            <Route path="/skills" element={<Skills/>}/>
+            <Route path="/skills/edit/:id" element={<EditSkills />} />
+            <Route path="/skills/create" element={<AddSkills/>} />
+          
+            <Route path="/services/create" element={<Addservices />} />
+          
 
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/avatars" element={<Avatars />} />

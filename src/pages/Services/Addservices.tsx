@@ -1,62 +1,45 @@
 
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router';
+import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router';
 import ngrokAxiosInstance from '../../hooks/axiosInstance';
 import ComponentCard from '../../components/common/ComponentCard';
 import Label from '../../components/form/Label';
 import Input from '../../components/form/input/InputField';
 import Button from '../../components/ui/button/Button';
 
-// Define the Service interface based on the API data structure
-interface Service {
-  _id: string;
+// Define the Service interface for form data
+interface ServiceFormData {
   title: string;
   description: string;
 }
 
-export default function EditService() {
-  const { id } = useParams<{ id: string }>();
+export default function AddServices() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const parentId = state?.parentId || '68563d750ea11f5d6792298a'; // Fallback ID
+  const parentId = state?.parentId || '68563d750ea11f5d6792298a'; // Fallback to hardcoded ID
 
   // State for form fields
-  const [service, setService] = useState<Service | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ServiceFormData>({
     title: '',
     description: '',
   });
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  // Fetch service data on component mount
-  useEffect(() => {
-    const fetchService = async () => {
-      try {
-        console.log('Fetching service with ID:', id, 'Parent ID:', parentId);
-        const response = await ngrokAxiosInstance.get(`/dynamic/ourSkills/${parentId}/service/${id}`);
-        console.log('Fetched service:', response.data);
-        setService(response.data);
-        setFormData({
-          title: response.data.title || '',
-          description: response.data.description || '',
-        });
-      } catch (err:any) {
-        setError(err.response?.data?.message || 'Failed to fetch service data');
-        console.error('Error fetching service:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (id) {
-      fetchService();
+  // Warn if parentId is missing
+  React.useEffect(() => {
+    if (!state?.parentId) {
+      console.warn('parentId not provided; using fallback ID:', parentId);
     }
-  }, [id, parentId]);
+  }, [state, parentId]);
 
   // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   // Handle submit action
@@ -81,16 +64,15 @@ export default function EditService() {
     setLoading(true);
     setError(null);
     try {
-      console.log('Updating service with ID:', id, 'Parent ID:', parentId);
-      await ngrokAxiosInstance.put(`/dynamic/ourSkills/${parentId}/service/${id}`, {
+      await ngrokAxiosInstance.post(`/dynamic/ourSkills/${parentId}/service`, {
         title: formData.title,
         description: formData.description,
       });
-      alert('Service updated successfully!');
-      navigate(-1, { state: { refresh: true } });
+      alert('Service added successfully!');
+      navigate(-1, { state: { refresh: true } }); // Signal refresh
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update service');
-      console.error('Error updating service:', err);
+      setError(err.response?.data?.message || 'Failed to add service');
+      console.error('Error adding service:', err);
     } finally {
       setLoading(false);
     }
@@ -101,16 +83,8 @@ export default function EditService() {
     navigate(-1);
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error || !service) {
-    return <div>{error || 'Service not found'}</div>;
-  }
-
   return (
-    <ComponentCard title="Edit Service">
+    <ComponentCard title="Add Service">
       <div className="space-y-6">
         <div>
           <Label htmlFor="title">Service Title</Label>
@@ -132,9 +106,9 @@ export default function EditService() {
             value={formData.description}
             onChange={handleInputChange}
             placeholder="Enter service description"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-dark-900 dark:border-gray-600 dark:text-gray-200"
-            rows={5}
             disabled={loading}
+            rows={5}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"
           />
         </div>
         {error && (
