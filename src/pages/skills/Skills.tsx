@@ -40,6 +40,7 @@ export default function SkillsTable() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [parentId, setParentId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null); // Added for error handling
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -49,6 +50,7 @@ export default function SkillsTable() {
     const fetchSkills = async () => {
       setLoading(true);
       try {
+        setError(null);
         const response = await ngrokAxiosInstance.get<SkillApiResponse | SkillApiResponse[]>('/dynamic/ourSkills');
         console.log('API Response:', response.data);
         let skillsData: Skill[] = [];
@@ -65,15 +67,16 @@ export default function SkillsTable() {
 
         setSkills(skillsData);
         setParentId(parentIdTemp);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching skills:', error);
+        setError(error.response?.data?.error || 'Failed to fetch skills');
         setSkills([]);
       } finally {
         setLoading(false);
       }
     };
     fetchSkills();
-  }, [location]); // Refetch when location changes (e.g., after add/edit)
+  }, [location.state?.refetch]); // Added refetch dependency to align with ServiceSectionTable
 
   // Toggle dropdown menu
   const toggleMenu = (id: string) => {
@@ -93,26 +96,38 @@ export default function SkillsTable() {
 
   // Handle Create action
   const handleCreateClick = () => {
+    if (!parentId) {
+      setError('Parent ID is not available');
+      return;
+    }
     navigate('/skills/create', { state: { parentId } });
     setActiveMenu(null);
   };
 
   // Handle Edit action
- const handleEditClick = (skill: Skill) => {
-  navigate(`/skills/edit/${skill._id}`, { state: { parentId } });
-  setActiveMenu(null);
-};
+  const handleEditClick = (skill: Skill) => {
+    if (!parentId) {
+      setError('Parent ID is not available');
+      return;
+    }
+    navigate(`/skills/edit/${skill._id}`, { state: { parentId } });
+    setActiveMenu(null);
+  };
 
   // Handle Delete action
   const handleDeleteClick = async (skill: Skill) => {
+    if (!parentId) {
+      setError('Parent ID is not available');
+      return;
+    }
     if (window.confirm('Are you sure you want to delete this skill?')) {
       try {
-        if (!parentId) throw new Error('Parent ID not available');
         await ngrokAxiosInstance.delete(`/dynamic/ourSkills/${parentId}/skill/${skill._id}`);
         setSkills(skills.filter((s) => s._id !== skill._id));
         console.log('Skill deleted:', skill._id);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error deleting skill:', error);
+        setError(error.response?.data?.error || 'Failed to delete skill');
       }
     }
     setActiveMenu(null);
@@ -126,7 +141,9 @@ export default function SkillsTable() {
           title="React.js Skills Dashboard | TailAdmin - Next.js Admin Dashboard Template"
           description="This is React.js Skills Dashboard page for TailAdmin - MN techs Admin Dashboard"
         />
-        <PageBreadcrumb pageTitle="Skills" />
+        <div className="flex justify-between items-baseline mb-4">
+          <PageBreadcrumb pageTitle="Skills" />
+        </div>
         <div className="space-y-6">
           <ComponentCard title="Skills Table">
             <div className="flex justify-center items-center h-64">
@@ -145,19 +162,23 @@ export default function SkillsTable() {
         title="React.js Skills Dashboard | TailAdmin - Next.js Admin Dashboard Template"
         description="This is React.js Skills Dashboard page for TailAdmin - MN techs Admin Dashboard"
       />
-      <PageBreadcrumb pageTitle="Skills" />
-      <div className="space-y-6">
-        {/* Add Skill Button Below Breadcrumb */}
-        <div className="flex justify-end">
+      <div className="flex justify-between items-center mb-4">
+        <PageBreadcrumb pageTitle="Skills" />
+        <div className="flex gap-2">
           <Button
             variant="primary"
+            size="sm"
             onClick={handleCreateClick}
-            className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700"
+            className="px-4 py-2 text-black! border-gray-200 bg-white hover:bg-gray-50! border dark:border-gray-800"
             aria-label="Add new skill"
+            disabled={!parentId} // Disable if parentId is not available
           >
             Add Skill
           </Button>
         </div>
+      </div>
+      <div className="space-y-6">
+        {error && <div className="text-red-600 dark:text-red-400 mb-4">{error}</div>}
         <ComponentCard title="Skills Table">
           <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
             <div className="max-w-full overflow-x-auto">
@@ -240,7 +261,7 @@ export default function SkillsTable() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell  className="px-5 py-4 text-center text-gray-500 text-theme-sm dark:text-gray-400">
+                      <TableCell colSpan={4} className="px-5 py-4 text-center text-gray-500 text-theme-sm dark:text-gray-400">
                         No skills available
                       </TableCell>
                     </TableRow>
