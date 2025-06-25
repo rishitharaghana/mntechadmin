@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { MoreVertical, Loader2 } from 'lucide-react'; // Added Loader2 for spinner
+import { MoreVertical, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import ngrokAxiosInstance from '../../hooks/axiosInstance';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '../../components/ui/table';
@@ -26,8 +26,9 @@ interface Employee {
 export default function AllEmployees() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true); // State for fetching loader
-  const [deletingId, setDeletingId] = useState<string | null>(null); // State for deleting loader
+  const [loading, setLoading] = useState<boolean>(true);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); // Added for error handling
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -35,13 +36,15 @@ export default function AllEmployees() {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        setLoading(true); // Start fetching loader
+        setLoading(true);
+        setError(null);
         const response = await ngrokAxiosInstance.get('/dynamic/team/');
         setEmployees(response.data);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching employees:', error);
+        setError(error.response?.data?.error || 'Failed to fetch employees');
       } finally {
-        setLoading(false); // Stop fetching loader
+        setLoading(false);
       }
     };
     fetchEmployees();
@@ -65,7 +68,7 @@ export default function AllEmployees() {
 
   // Handle create action
   const handleCreateClick = () => {
-    navigate('/employees/create'); // Adjust route as per your app's structure
+    navigate('/employees/create');
     setActiveMenu(null);
   };
 
@@ -79,14 +82,15 @@ export default function AllEmployees() {
   const handleDeleteClick = async (employee: Employee) => {
     if (window.confirm('Are you sure you want to delete this employee?')) {
       try {
-        setDeletingId(employee._id); // Start deleting loader for this employee
+        setDeletingId(employee._id);
         await ngrokAxiosInstance.delete(`/dynamic/team/${employee._id}`);
         setEmployees(employees.filter((e) => e._id !== employee._id));
         console.log('Employee deleted:', employee._id);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error deleting employee:', error);
+        setError(error.response?.data?.error || 'Failed to delete employee');
       } finally {
-        setDeletingId(null); // Stop deleting loader
+        setDeletingId(null);
         setActiveMenu(null);
       }
     } else {
@@ -102,7 +106,9 @@ export default function AllEmployees() {
           title="React.js Employee Tables Dashboard | TailAdmin - Next.js Admin Dashboard Template"
           description="This is React.js Employee Tables Dashboard page for TailAdmin - MN techs Admin Dashboard"
         />
-        <PageBreadcrumb pageTitle="Employee Tables" />
+        <div className="flex justify-between items-baseline mb-4">
+          <PageBreadcrumb pageTitle="Employee Tables" />
+        </div>
         <div className="space-y-6">
           <ComponentCard title="Basic Table 1">
             <div className="flex justify-center items-center h-64">
@@ -121,19 +127,22 @@ export default function AllEmployees() {
         title="React.js Employee Tables Dashboard | TailAdmin - Next.js Admin Dashboard Template"
         description="This is React.js Employee Tables Dashboard page for TailAdmin - MN techs Admin Dashboard"
       />
-      <PageBreadcrumb pageTitle="Employee Tables" />
-      {/* Add Employee Button Below Breadcrumb */}
-      <div className="flex justify-end">
-        <Button
-          variant="primary"
-          onClick={handleCreateClick}
-          className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700"
-          aria-label="Add new employee"
-        >
-          Add Employee
-        </Button>
+      <div className="flex justify-between items-center mb-4">
+        <PageBreadcrumb pageTitle="Employee Tables" />
+        <div className="flex gap-2">
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={handleCreateClick}
+            className="px-4 py-2 text-black! border-gray-200 bg-white hover:bg-gray-50! border dark:border-gray-800"
+            aria-label="Add new employee"
+          >
+            Add Employee
+          </Button>
+        </div>
       </div>
       <div className="space-y-6">
+        {error && <div className="text-red-600 dark:text-red-400 mb-4">{error}</div>}
         <ComponentCard title="Basic Table 1">
           <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
             <div className="max-w-full overflow-x-auto">
@@ -204,7 +213,7 @@ export default function AllEmployees() {
                             variant="outline"
                             size="sm"
                             onClick={() => toggleMenu(employee._id)}
-                            disabled={deletingId === employee._id} // Disable button during deletion
+                            disabled={deletingId === employee._id}
                           >
                             {deletingId === employee._id ? (
                               <Loader2 className="size-5 text-gray-500 animate-spin" />
