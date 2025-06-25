@@ -42,7 +42,6 @@ const navItems: NavItem[] = [
          { name: "News Letter", path: "/news-letter", pro: false },
          { name: "Services", path: "/services", pro: false },
        { name: "Skills", path: "/skills", pro: false },
-       { name: "Reviews", path: "/basic-tables", pro: false },
        { name: "Contact", path: "/contact/contact_us", pro: false },
 
     

@@ -8,9 +8,11 @@ export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
- 
   const user = localStorage.getItem("user");
   const userData = user ? JSON.parse(user) : null;
+
+  // Get the first letter of the user's name in uppercase, or fallback to 'G' for Guest
+  const firstLetter = userData ? userData.name.charAt(0).toUpperCase() : 'G';
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
@@ -20,11 +22,10 @@ export default function UserDropdown() {
     setIsOpen(false);
   }
 
- 
   function handleSignOut() {
-    localStorage.removeItem("user"); 
-    closeDropdown(); 
-    navigate("/signin"); 
+    localStorage.removeItem("user");
+    closeDropdown();
+    navigate("/signin");
   }
 
   return (
@@ -33,14 +34,8 @@ export default function UserDropdown() {
         onClick={toggleDropdown}
         className="flex items-center text-gray-700 dropdown-toggle dark:text-gray-400"
       >
-        <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
-          <img
-            src="/images/user/owner.jpg"
-            alt="User"
-            onError={(e) => {
-              e.currentTarget.src = "/images/user/placeholder.jpg"; // Fallback image
-            }}
-          />
+        <span className="mr-3 overflow-hidden rounded-full h-11 w-11 flex items-center justify-center bg-gray-100 dark:bg-gray-700">
+            <span className="text-xl font-semibold text-gray-600 dark:text-gray-300">{firstLetter}</span>
         </span>
         <span className="block mr-1 font-medium text-theme-sm">
           {userData ? userData.name : "Guest"}
@@ -81,8 +76,6 @@ export default function UserDropdown() {
               </span>
             </div>
             <ul className="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
-             
-             
               <li>
                 <DropdownItem
                   onItemClick={closeDropdown}

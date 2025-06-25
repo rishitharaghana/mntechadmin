@@ -6,7 +6,7 @@ import { Link } from "react-router";
 
 // Define the interface for the props
 interface HeaderProps {
-  onClick?: () => void; 
+  onClick?: () => void;
   onToggle: () => void;
 }
 const Header: React.FC<HeaderProps> = ({ onClick, onToggle }) => {
@@ -51,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({ onClick, onToggle }) => {
               <path
                 fillRule="evenodd"
                 clipRule="evenodd"
-                d="M6.21967 7.28131C5.92678 6.98841 5.92678 6.51354 6.21967 6.22065C6.51256 5.92775 6.98744 5.92775 7.28033 6.22065L11.999 10.9393L16.7176 6.22078C17.0105 5.92789 17.4854 5.92788 17.7782 6.22078C18.0711 6.51367 18.0711 6.98855 17.7782 7.28144L13.0597 12L17.7782 16.7186C18.0711 17.0115 18.0711 17.4863 17.7782 17.7792C17.4854 18.0721 17.0105 18.0721 16.7176 17.7792L11.999 13.0607L7.28033 17.7794C6.98744 18.0722 6.51256 18.0722 6.21967 17.7794C5.92678 17.4865 5.92678 17.0116 6.21967 16.7187L10.9384 12L6.21967 7.28131Z"
+                d="M6.21967 7.28131C5.92678 6.98841 5.92678 6.51354 6.21967 6.22065C6.51256 5.92775 6.98744 5.92775 7.28033 6.22065L11.999 10.9393L16.7176 6.22078C17.0105 5.92789 17.4854 5.92788 17.7782 6.22078C18.0711 6.51367 18.0711 6.98855 17.7782 7.28144L13.0597 12L17.7782 16.7186C18.0711 17.0115 18.0711 17.4863 17.7782 17.7792C17.4854 18.0721 17.0105 18.0721 17.7176 17.7792L11.999 13.0607L7.28033 17.7794C6.98744 18.0722 6.51256 18.0722 6.21967 17.7794C5.92678 17.4865 5.92678 17.0116 6.21967 16.7187L10.9384 12L6.21967 7.28131Z"
                 fill="currentColor"
               />
             </svg>
@@ -62,7 +62,7 @@ const Header: React.FC<HeaderProps> = ({ onClick, onToggle }) => {
             className="items-center justify-center hidden w-10 h-10 text-gray-500 border-gray-200 rounded-lg z-99999 dark:border-gray-800 lg:flex dark:text-gray-400 lg:h-11 lg:w-11 lg:border"
           >
             <svg
-              className="hidden  fill-current lg:block"
+              className="hidden fill-current lg:block"
               width="16"
               height="12"
               viewBox="0 0 16 12"
@@ -79,17 +79,19 @@ const Header: React.FC<HeaderProps> = ({ onClick, onToggle }) => {
           </button>
 
           <Link to="/" className="lg:hidden">
-          <img
-            className="dark:hidden sm:h-8 sm:w-8 md:h-10 md:w-10"
-            src="./images/mntech.png"
-            alt="Logo"
-          />
-          <img
-            className="hidden dark:block sm:h-8 sm:w-8 md:h-10 md:w-10"
-            src="./images/mntech.png"
-            alt="Logo"
-          />
-        </Link>
+            <div className="flex items-center">
+              <img
+                className="dark:hidden h-6 w-5! sm:h-2! md:h-10 lg:h-12 object-contain"
+                src="./images/mntech.png"
+                alt="Logo"
+              />
+              <img
+                className="hidden dark:block h-6 w-5! sm:h-2! md:h-10 lg:h-12 object-contain"
+                src="./images/mntech.png"
+                alt="Logo"
+              />
+            </div>
+          </Link>
 
           <button
             onClick={toggleApplicationMenu}
