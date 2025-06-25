@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react"; // Explicit React import for JSX
+import React, { useState, useEffect } from "react";
+import { Loader2 } from "lucide-react"; // Import Loader2 for consistency
 import ngrokAxiosInstance from "../../hooks/axiosInstance";
-import { AxiosError } from "axios"; // Import AxiosError
+import { AxiosError } from "axios";
 import {
   Table,
   TableBody,
@@ -26,7 +27,6 @@ interface Contact {
   __v: number;
 }
 
-// Define Axios error response shape
 interface AxiosErrorResponse {
   message?: string;
 }
@@ -36,14 +36,13 @@ export default function ContactList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10; // 10 contacts per page
+  const itemsPerPage = 10;
 
-  // Fetch contact data on component mount
   useEffect(() => {
     const fetchContacts = async () => {
       try {
         const response = await ngrokAxiosInstance.get("/contact/contact_us");
-        console.log("API Response:", response.data); // Debug response
+        console.log("API Response:", response.data);
         setContacts(Array.isArray(response.data) ? response.data : response.data.data || []);
       } catch (err) {
         const axiosError = err as AxiosError<AxiosErrorResponse>;
@@ -68,27 +67,59 @@ export default function ContactList() {
     fetchContacts();
   }, []);
 
-  // Calculate pagination values
   const totalItems = contacts.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedContacts = contacts.slice(startIndex, endIndex);
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+  const paginatedData = contacts.slice(startIndex, endIndex);
 
-  // Handle page navigation
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
   };
 
-  // Loading spinner component
-  const LoadingSpinner = () => (
-    <div className="flex justify-center items-center py-10">
-      <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-      <span className="ml-4 text-gray-600 dark:text-gray-300 text-lg">Loading contacts...</span>
-    </div>
-  );
+  const goToPreviousPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1); // Fixed typo: setBizCurrentPage -> setCurrentPage
+  };
+
+  const getPaginationItems = () => {
+    if (totalPages === 0) return [];
+
+    const pages: (number | string)[] = [];
+    const totalVisiblePages = 5;
+
+    if (totalPages <= totalVisiblePages + 2) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      let start = Math.max(2, currentPage - 2);
+      let end = Math.min(totalPages - 1, currentPage + 2);
+
+      if (currentPage <= 3) {
+        start = 2;
+        end = 5;
+      }
+
+      if (currentPage >= totalPages - 2) {
+        start = totalPages - 4;
+        end = totalPages - 1;
+      }
+
+      pages.push(1);
+      if (start > 2) pages.push("...");
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+      if (end < totalPages - 1) pages.push("...");
+      if (totalPages > 1) pages.push(totalPages);
+    }
+
+    return pages;
+  };
 
   if (loading) {
     return (
@@ -102,7 +133,10 @@ export default function ContactList() {
         </div>
         <div className="space-y-6">
           <ComponentCard title="Contact List">
-            <LoadingSpinner />
+            <div className="flex justify-center items-center h-64">
+              <Loader2 className="size-6 text-gray-500 animate-spin" />
+              <span className="ml-2 text-gray-500">Loading...</span>
+            </div>
           </ComponentCard>
         </div>
       </>
@@ -131,129 +165,152 @@ export default function ContactList() {
   }
 
   return (
-    <ComponentCard title="Contact List">
-      <div className="max-w-full overflow-x-auto">
-        <Table>
-          <TableHeader className="border-b border-gray-200 dark:border-gray-700">
-            <TableRow>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
-              >
-                Sl.No
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
-              >
-                Name
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
-              >
-                Email
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
-              >
-                Phone
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
-              >
-                Message
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
-              >
-                Agree to Updates
-              </TableCell>
-            </TableRow>
-          </TableHeader>
-          <TableBody className="divide-y divide-gray-200 dark:divide-gray-700">
-            {paginatedContacts.length > 0 ? (
-              paginatedContacts.map((contact, index) => (
-                <TableRow key={contact._id}>
-                  <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
-                    {startIndex + index + 1}
-                  </TableCell>
-                  <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
-                    {contact.name}
-                  </TableCell>
-                  <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
-                    {contact.email}
-                  </TableCell>
-                  <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
-                    {contact.phone || "N/A"}
-                  </TableCell>
-                  <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
-                    {contact.message || "N/A"}
-                  </TableCell>
-                  <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
-                    <Badge
-                      size="sm"
-                      color={contact.agreeToUpdates ? "primary" : "warning"}
-                    >
-                      {" "}
-                      {contact.agreeToUpdates ? "Yes" : "No"}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell className="px-5 py-4 text-center text-gray-600 text-sm dark:text-gray-400">
-                  No contacts found
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+    <>
+      <PageMeta
+        title="React.js Contact List Dashboard | TailAdmin - Next.js Admin Dashboard Template"
+        description="This is React.js Contact List Dashboard page for TailAdmin - MN techs Admin Dashboard"
+      />
+      <div className="flex justify-between items-baseline mb-4">
+        <PageBreadcrumb pageTitle="Contact List" />
       </div>
-
-      {totalPages > 1 && (
-        <div className="flex justify-between items-center mt-4 px-4 py-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-4 py-2 text-gray-700 dark:text-gray-200 disabled:opacity-50 rounded-md border border-gray-300 dark:border-gray-600"
-          >
-            Previous
-          </Button>
-          <div className="flex gap-2">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <Button
-                key={page}
-                variant={currentPage === page ? "primary" : "outline"}
-                size="sm"
-                onClick={() => handlePageChange(page)}
-                className={`px-3 py-1 text-sm rounded-md ${
-                  currentPage === page
-                    ? "bg-blue-500 text-white"
-                    : "text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600"
-                }`}
-              >
-                {page}
-              </Button>
-            ))}
+      <div className="space-y-6">
+        <ComponentCard title="Contact List">
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+            <div className="max-w-full overflow-x-auto">
+              <Table>
+                <TableHeader className="border-b border-gray-200 dark:border-gray-700">
+                  <TableRow>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
+                    >
+                      Sl.No
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
+                    >
+                      Name
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
+                    >
+                      Email
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
+                    >
+                      Phone
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
+                    >
+                      Message
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-700 text-start text-sm dark:text-gray-300"
+                    >
+                      Agree to Updates
+                    </TableCell>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {paginatedData.length > 0 ? (
+                    paginatedData.map((contact, index) => (
+                      <TableRow key={contact._id}>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
+                          {startIndex + index + 1}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
+                          {contact.name}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
+                          {contact.email}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
+                          {contact.phone || "N/A"}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
+                          {contact.message || "N/A"}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-600 text-sm dark:text-gray-400">
+                          <Badge
+                            size="sm"
+                            color={contact.agreeToUpdates ? "primary" : "warning"}
+                          >
+                            {contact.agreeToUpdates ? "Yes" : "No"}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell className="px-5 py-4 text-center text-gray-600 text-sm dark:text-gray-400" colSpan={6}>
+                        No contacts found
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-4 py-2 text-gray-700 dark:text-gray-200 disabled:opacity-50 rounded-md border border-gray-300 dark:border-gray-600"
-          >
-            Next
-          </Button>
-        </div>
-      )}
-    </ComponentCard>
+          {!loading && !error && totalItems > itemsPerPage && (
+            <div className="flex flex-col sm:flex-row justify-between items-center mt-4 px-4 py-2 gap-4">
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                Showing {startIndex + 1} to {endIndex} of {totalItems} entries
+              </div>
+              <div className="flex gap-2 flex-wrap justify-center">
+                <Button
+                  variant={currentPage === 1 ? "outline" : "primary"}
+                  size="sm"
+                  onClick={goToPreviousPage}
+                  disabled={currentPage === 1}
+                  className={currentPage === 1 ? "text-gray-500" : "bg-[#1D3A76] text-white"}
+                >
+                  Previous
+                </Button>
+                {getPaginationItems().map((page, index) =>
+                  page === "..." ? (
+                    <span
+                      key={`ellipsis-${index}`}
+                      className="px-3 py-1 text-gray-500 dark:text-gray-400"
+                    >
+                      ...
+                    </span>
+                  ) : (
+                    <Button
+                      key={page}
+                      variant={page === currentPage ? "primary" : "outline"}
+                      size="sm"
+                      onClick={() => goToPage(page as number)}
+                      className={
+                        page === currentPage
+                          ? "bg-[#1D3A76] text-white"
+                          : "text-gray-500"
+                      }
+                    >
+                      {page}
+                    </Button>
+                  )
+                )}
+                <Button
+                  variant={currentPage === totalPages ? "outline" : "primary"}
+                  size="sm"
+                  onClick={goToNextPage}
+                  disabled={currentPage === totalPages}
+                  className={currentPage === totalPages ? "text-gray-500" : "bg-[#1D3A76] text-white"}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
+        </ComponentCard>
+      </div>
+    </>
   );
 }
