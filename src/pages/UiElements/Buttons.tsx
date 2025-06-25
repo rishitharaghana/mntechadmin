@@ -13,7 +13,6 @@ export default function Buttons() {
       />
       <PageBreadcrumb pageTitle="Buttons" />
       <div className="space-y-5 sm:space-y-6">
-        {/* Primary Button */}
         <ComponentCard title="Primary Button">
           <div className="flex items-center gap-5">
             <Button size="sm" variant="primary">

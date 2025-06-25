@@ -30,6 +30,7 @@ import CreateServiceForm from "./pages/ITServices/CreateService";
 import EditServiceForm from "./pages/ITServices/EditService";
 import CreateProductForm from "./pages/ITServices/Createproduct";
 import EditProductForm from "./pages/ITServices/EditProduct";
+import AddEmployee from "./pages/Employees/AddEmployee";
 
 
 
@@ -61,6 +62,10 @@ export default function App() {
             <Route path="/reachus" element={<ReachUsTable/>}/>
             <Route path="/news-letter" element={<NewsletterSubscribers/>}/>
             <Route path="/services" element={<Services/>}/>
+             <Route path="/team" element={<AddEmployee/>}/>
+            <Route path="/employees/create" element={<AddEmployee />} />
+
+
            
             <Route path="/services/edit/:id" element={<EditServices />} />
             <Route path="/skills" element={<Skills/>}/>

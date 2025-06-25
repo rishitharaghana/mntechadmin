@@ -63,9 +63,14 @@ export default function AllEmployees() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Handle create action
+  const handleCreateClick = () => {
+    navigate('/employees/create'); // Adjust route as per your app's structure
+    setActiveMenu(null);
+  };
+
   // Handle edit action
   const handleEditClick = (employee: Employee) => {
-    console.log('Edit employee:', employee);
     navigate(`/employees/edit/${employee._id}`);
     setActiveMenu(null);
   };
@@ -117,6 +122,17 @@ export default function AllEmployees() {
         description="This is React.js Employee Tables Dashboard page for TailAdmin - MN techs Admin Dashboard"
       />
       <PageBreadcrumb pageTitle="Employee Tables" />
+      {/* Add Employee Button Below Breadcrumb */}
+      <div className="flex justify-end">
+        <Button
+          variant="primary"
+          onClick={handleCreateClick}
+          className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700"
+          aria-label="Add new employee"
+        >
+          Add Employee
+        </Button>
+      </div>
       <div className="space-y-6">
         <ComponentCard title="Basic Table 1">
           <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -159,66 +175,74 @@ export default function AllEmployees() {
 
                 {/* Table Body */}
                 <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                  {employees.map((employee, index) => (
-                    <TableRow key={employee._id}>
-                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                        {index + 1}
-                      </TableCell>
-                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                        {employee.name}
-                      </TableCell>
-                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                        <Badge size="sm" color="success">
-                          {employee.designation}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                        <a
-                          href={employee.linkedin_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-500 hover:underline"
-                        >
-                          LinkedIn
-                        </a>
-                      </TableCell>
-                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400 relative">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => toggleMenu(employee._id)}
-                          disabled={deletingId === employee._id} // Disable button during deletion
-                        >
-                          {deletingId === employee._id ? (
-                            <Loader2 className="size-5 text-gray-500 animate-spin" />
-                          ) : (
-                            <MoreVertical className="size-5 text-gray-500 dark:text-gray-400" />
-                          )}
-                        </Button>
-                        {activeMenu === employee._id && (
-                          <div
-                            ref={dropdownRef}
-                            className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-10"
+                  {employees.length > 0 ? (
+                    employees.map((employee, index) => (
+                      <TableRow key={employee._id}>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
+                          {index + 1}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
+                          {employee.name}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
+                          <Badge size="sm" color="success">
+                            {employee.designation}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
+                          <a
+                            href={employee.linkedin_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-500 hover:underline"
                           >
-                            <div className="py-2">
-                              <button
-                                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                onClick={() => handleEditClick(employee)}
-                              >
-                                Edit
-                              </button>
-                              <button
-                                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                onClick={() => handleDeleteClick(employee)}
-                              >
-                                Delete
-                              </button>
+                            LinkedIn
+                          </a>
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400 relative">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => toggleMenu(employee._id)}
+                            disabled={deletingId === employee._id} // Disable button during deletion
+                          >
+                            {deletingId === employee._id ? (
+                              <Loader2 className="size-5 text-gray-500 animate-spin" />
+                            ) : (
+                              <MoreVertical className="size-5 text-gray-500 dark:text-gray-400" />
+                            )}
+                          </Button>
+                          {activeMenu === employee._id && (
+                            <div
+                              ref={dropdownRef}
+                              className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-10"
+                            >
+                              <div className="py-2">
+                                <button
+                                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                  onClick={() => handleEditClick(employee)}
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                  onClick={() => handleDeleteClick(employee)}
+                                >
+                                  Delete
+                                </button>
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5} className="px-5 py-4 text-center text-gray-500 text-theme-sm dark:text-gray-400">
+                        No employees available
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
             </div>

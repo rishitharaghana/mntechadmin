@@ -39,28 +39,30 @@ export default function EditSkills() {
   }, [state, parentId]);
 
   // Fetch skill data on component mount
- useEffect(() => {
-  const fetchSkill = async () => {
-    try {
-      if (!id || !parentId) {
-        throw new Error('Skill ID or Parent ID is missing');
+  useEffect(() => {
+    const fetchSkill = async () => {
+      try {
+        if (!id || !parentId) {
+          throw new Error('Skill ID or Parent ID is missing');
+        }
+        console.log('Fetching skill with ID:', id, 'Parent ID:', parentId);
+        const response = await ngrokAxiosInstance.get(`/dynamic/ourSkills/${parentId}/skill/${id}`);
+        console.log('API Response:', response.data); // Debug response
+        const skillData = response.data.data || response.data; // Adjust based on actual structure
+        setSkill(skillData);
+        setFormData({
+          name: skillData.name || '',
+          percentage: skillData.percentage || 0,
+        });
+      } catch (err: any) {
+        setError(err.response?.data?.error || 'Failed to fetch skill data');
+        console.error('Error fetching skill:', err);
+      } finally {
+        setLoading(false);
       }
-      console.log('Fetching skill with ID:', id, 'Parent ID:', parentId);
-      const response = await ngrokAxiosInstance.get(`/dynamic/ourSkills/${parentId}/skill/${id}`);
-      setSkill(response.data.data); // Correctly set skill to response.data.data
-      setFormData({
-        name: response.data.data.name || '',
-        percentage: response.data.data.percentage || 0,
-      });
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to fetch skill data');
-      console.error('Error fetching skill:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  fetchSkill();
-}, [id, parentId]);
+    };
+    fetchSkill();
+  }, [id, parentId]);
 
   // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,10 +93,8 @@ export default function EditSkills() {
     setError(null);
     try {
       console.log('Updating skill with ID:', id, 'Parent ID:', parentId, 'Data:', formData);
-      await ngrokAxiosInstance.put(`/dynamic/ourSkills/${parentId}/skill/${id}`, {
-        name: formData.name,
-        percentage: formData.percentage,
-      });
+      const response = await ngrokAxiosInstance.put(`/dynamic/ourSkills/${parentId}/skill/${id}`, formData);
+      console.log('Update Response:', response.data);
       alert('Skill updated successfully!');
       navigate('/skills', { state: { refresh: true } });
     } catch (err: any) {
@@ -157,7 +157,6 @@ export default function EditSkills() {
               value={formData.percentage}
               onChange={handleInputChange}
               placeholder="Enter percentage"
-            
               disabled={loading}
             />
           </div>
@@ -173,7 +172,7 @@ export default function EditSkills() {
             </Button>
             <Button
               variant="primary"
-             
+              type="submit"
               className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700"
               disabled={loading}
             >
