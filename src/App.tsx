@@ -3,12 +3,7 @@ import SignIn from "./pages/AuthPages/SignIn";
 
 import NotFound from "./pages/OtherPage/NotFound";
 import UserProfiles from "./pages/UserProfiles";
-import Videos from "./pages/UiElements/Videos";
-import Images from "./pages/UiElements/Images";
-import Alerts from "./pages/UiElements/Alerts";
-import Badges from "./pages/UiElements/Badges";
-import Avatars from "./pages/UiElements/Avatars";
-import Buttons from "./pages/UiElements/Buttons";
+
 
 import ContactUs from "./pages/Contact/ContactUs"
 import BasicTables from "./pages/Tables/BasicTables";
@@ -30,8 +25,11 @@ import EditSkills from "./pages/skills/Editskills";
 import Skills from "./pages/skills/Skills";
 import Addservices from "./pages/Services/Addservices";
 import ITServices from "./pages/ITServices/ITServices";
-import EditITServices from "./pages/ITServices/EditITServices"
-import AddITServices from "./pages/ITServices/AddITServices";
+
+import CreateServiceForm from "./pages/ITServices/CreateService";
+import EditServiceForm from "./pages/ITServices/EditService";
+import CreateProductForm from "./pages/ITServices/Createproduct";
+import EditProductForm from "./pages/ITServices/EditProduct";
 
 
 
@@ -46,11 +44,13 @@ export default function App() {
             <Route path="/profile" element={<UserProfiles />} />
             <Route path="/blank" element={<Blank />} />
             <Route path="/form-elements" element={<FormElements />} />
-           
-
            <Route path="/it-services" element={<ITServices />} />
-          <Route path="/it-services/edit/:id" element={<EditITServices />} />
-          <Route path="/it-services/create" element={<AddITServices />} />
+          
+            <Route path="/it-services/create/service" element={<CreateServiceForm />} />
+            <Route path="/it-services/edit/service/:itemId" element={<EditServiceForm />} />
+             <Route path="/it-services/create/product" element={<CreateProductForm />} />
+        <Route path="/it-services/edit/product/:itemId" element={<EditProductForm />} />
+
            
             <Route path="/basic-tables" element={<BasicTables />} />
             <Route path="/reviews/edit/:id" element={<EditReview />} />
@@ -70,12 +70,7 @@ export default function App() {
             <Route path="/services/create" element={<Addservices />} />
           
 
-            <Route path="/alerts" element={<Alerts />} />
-            <Route path="/avatars" element={<Avatars />} />
-            <Route path="/badge" element={<Badges />} />
-            <Route path="/buttons" element={<Buttons />} />
-            <Route path="/images" element={<Images />} />
-            <Route path="/videos" element={<Videos />} />
+          
           </Route>
         </Route>
         <Route path="/signin" element={<SignIn />} />

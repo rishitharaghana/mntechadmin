@@ -10,7 +10,7 @@ import Badge from '../../components/ui/badge/Badge';
 import ngrokAxiosInstance from '../../hooks/axiosInstance';
 import Button from '../../components/ui/button/Button';
 import { MoreVertical, Loader2 } from 'lucide-react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import ComponentCard from '../../components/common/ComponentCard';
 import PageBreadcrumb from '../../components/common/PageBreadCrumb';
 import PageMeta from '../../components/common/PageMeta';
@@ -43,14 +43,17 @@ export default function ServiceSectionTable() {
   const [sectionId, setSectionId] = useState<string | null>(null);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null); // Added for error handling
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Fetch service section data
   useEffect(() => {
     const fetchServiceSection = async () => {
       try {
         setLoading(true);
+        setError(null);
         const response = await ngrokAxiosInstance.get('/dynamic/serviceSection');
         const data: ServiceSection = response.data;
         setSectionId(data._id);
@@ -59,14 +62,15 @@ export default function ServiceSectionTable() {
           ...data.products.map((item) => ({ ...item, type: 'Product' as const })),
         ];
         setItems(combinedItems);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching service section:', error);
+        setError(error.response?.data?.error || 'Failed to fetch service section');
       } finally {
         setLoading(false);
       }
     };
     fetchServiceSection();
-  }, []);
+  }, [location.state?.refetch]);
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -95,6 +99,10 @@ export default function ServiceSectionTable() {
 
   // Handle Create action
   const handleCreateClick = (type: 'Service' | 'Product') => {
+    if (!sectionId) {
+      setError('Section ID is not available');
+      return;
+    }
     navigate(`/it-services/create/${type.toLowerCase()}`, {
       state: { parentId: sectionId },
     });
@@ -102,20 +110,27 @@ export default function ServiceSectionTable() {
 
   // Handle Delete action
   const handleDeleteClick = async (item: TableItem) => {
+    if (!sectionId) {
+      setError('Section ID is not available');
+      return;
+    }
     if (window.confirm(`Are you sure you want to delete this ${item.type.toLowerCase()}?`)) {
       try {
-        const endpoint = `/dynamic/serviceSection/${sectionId}/${item.type.toLowerCase()}s/${item._id}`;
+        // Fix: Use 'itServices' instead of 'services' for Service type
+        const type = item.type === 'Service' ? 'itServices' : 'products';
+        const endpoint = `/dynamic/serviceSection/${sectionId}/${type}/${item._id}`;
         await ngrokAxiosInstance.delete(endpoint);
         setItems(items.filter((i) => i._id !== item._id));
         console.log(`${item.type} deleted:`, item._id);
-      } catch (error) {
+      } catch (error: any) {
         console.error(`Error deleting ${item.type.toLowerCase()}:`, error);
+        setError(error.response?.data?.error || `Failed to delete ${item.type.toLowerCase()}`);
       }
     }
     setActiveMenu(null);
   };
 
-  // Show loader while fetching data
+  // Show loader or error
   if (loading) {
     return (
       <>
@@ -152,6 +167,7 @@ export default function ServiceSectionTable() {
             size="sm"
             onClick={() => handleCreateClick('Service')}
             className="px-4 py-2 text-black! border-gray-200 bg-white hover:bg-gray-50! border dark:border-gray-800"
+            disabled={!sectionId} // Disable if sectionId is not available
           >
             Create New Service
           </Button>
@@ -160,12 +176,14 @@ export default function ServiceSectionTable() {
             size="sm"
             onClick={() => handleCreateClick('Product')}
             className="px-4 py-2 text-black! border-gray-200 bg-white hover:bg-gray-50! border dark:border-gray-800"
+            disabled={!sectionId} // Disable if sectionId is not available
           >
             Create New Product
           </Button>
         </div>
       </div>
       <div className="space-y-6">
+        {error && <div className="text-red-600 dark:text-red-400 mb-4">{error}</div>}
         <ComponentCard title="Service Section Table">
           <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
             <div className="max-w-full overflow-x-auto">
@@ -238,6 +256,7 @@ export default function ServiceSectionTable() {
                           variant="outline"
                           size="sm"
                           onClick={() => toggleMenu(item._id)}
+                          disabled={loading} // Disable actions during loading
                         >
                           <MoreVertical className="size-5 text-gray-500 dark:text-gray-400" />
                         </Button>

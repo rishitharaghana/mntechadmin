@@ -6,7 +6,7 @@ import { Link } from "react-router";
 
 // Define the interface for the props
 interface HeaderProps {
-  onClick?: () => void; // Optional function that takes no arguments and returns void
+  onClick?: () => void; 
   onToggle: () => void;
 }
 const Header: React.FC<HeaderProps> = ({ onClick, onToggle }) => {
@@ -62,7 +62,7 @@ const Header: React.FC<HeaderProps> = ({ onClick, onToggle }) => {
             className="items-center justify-center hidden w-10 h-10 text-gray-500 border-gray-200 rounded-lg z-99999 dark:border-gray-800 lg:flex dark:text-gray-400 lg:h-11 lg:w-11 lg:border"
           >
             <svg
-              className="hidden fill-current lg:block"
+              className="hidden  fill-current lg:block"
               width="16"
               height="12"
               viewBox="0 0 16 12"
@@ -79,17 +79,17 @@ const Header: React.FC<HeaderProps> = ({ onClick, onToggle }) => {
           </button>
 
           <Link to="/" className="lg:hidden">
-            <img
-              className="dark:hidden"
-              src="./images/mntech.png"
-              alt="Logo"
-            />
-            <img
-              className="hidden dark:block"
-              src="./images/mntech.png"
-              alt="Logo"
-            />
-          </Link>
+          <img
+            className="dark:hidden sm:h-8 sm:w-8 md:h-10 md:w-10"
+            src="./images/mntech.png"
+            alt="Logo"
+          />
+          <img
+            className="hidden dark:block sm:h-8 sm:w-8 md:h-10 md:w-10"
+            src="./images/mntech.png"
+            alt="Logo"
+          />
+        </Link>
 
           <button
             onClick={toggleApplicationMenu}
