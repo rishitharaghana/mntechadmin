@@ -14,7 +14,6 @@ import ComponentCard from '../../components/common/ComponentCard';
 import PageBreadcrumb from '../../components/common/PageBreadCrumb';
 import PageMeta from '../../components/common/PageMeta';
 
-
 // Define the Service interface for individual service entries
 interface IndividualService {
   _id: string;
@@ -41,6 +40,7 @@ export default function ServicesTable() {
   const [parentId, setParentId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [error, setError] = useState<string | null>(null); // Added for error handling
   const itemsPerPage = 10;
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -51,20 +51,22 @@ export default function ServicesTable() {
     const fetchServices = async () => {
       try {
         setLoading(true);
+        setError(null);
         const response = await ngrokAxiosInstance.get('/dynamic/service/');
         const allServices = response.data.flatMap((service: Service) => service.services);
-        const parentIdTemp = response.data[0]?._id || '685a7586a5646909c426b63c'; // Use provided parent ID
+        const parentIdTemp = response.data[0]?._id || '685a7586a5646909c426b63c';
         setIndividualServices(allServices);
         setParentId(parentIdTemp);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching services:', error);
+        setError(error.response?.data?.error || 'Failed to fetch services');
         setIndividualServices([]);
       } finally {
         setLoading(false);
       }
     };
     fetchServices();
-  }, [location]);
+  }, [location.state?.refetch]); // Added refetch dependency to match ServiceSectionTable
 
   // Toggle dropdown menu
   const toggleMenu = (id: string) => {
@@ -84,28 +86,38 @@ export default function ServicesTable() {
 
   // Handle Create action
   const handleCreateClick = () => {
+    if (!parentId) {
+      setError('Parent ID is not available');
+      return;
+    }
     navigate('/services/create', { state: { parentId } });
     setActiveMenu(null);
   };
 
   // Handle Edit action
   const handleEditClick = (service: IndividualService) => {
+    if (!parentId) {
+      setError('Parent ID is not available');
+      return;
+    }
     navigate(`/services/edit/${service._id}`, { state: { parentId } });
     setActiveMenu(null);
   };
 
   // Handle Delete action
   const handleDeleteClick = async (service: IndividualService) => {
+    if (!parentId) {
+      setError('Parent ID is not available');
+      return;
+    }
     if (window.confirm('Are you sure you want to delete this service?')) {
       try {
-        if (!parentId) {
-          throw new Error('Parent ID is not available');
-        }
         await ngrokAxiosInstance.delete(`/dynamic/service/${parentId}/service-item/${service._id}`);
         setIndividualServices(individualServices.filter((s) => s._id !== service._id));
         console.log('Service item deleted:', service._id);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error deleting service item:', error);
+        setError(error.response?.data?.error || 'Failed to delete service');
       }
       setActiveMenu(null);
     }
@@ -174,7 +186,9 @@ export default function ServicesTable() {
           title="React.js Services Dashboard | TailAdmin - Next.js Admin Dashboard Template"
           description="This is React.js Services Dashboard page for TailAdmin - MN techs Admin Dashboard"
         />
-        <PageBreadcrumb pageTitle="Services" />
+        <div className="flex justify-between items-baseline mb-4">
+          <PageBreadcrumb pageTitle="Services" />
+        </div>
         <div className="space-y-6">
           <ComponentCard title="Services Table">
             <div className="flex justify-center items-center h-64">
@@ -193,25 +207,29 @@ export default function ServicesTable() {
         title="React.js Services Dashboard | TailAdmin - Next.js Admin Dashboard Template"
         description="This is React.js Services Dashboard page for TailAdmin - MN techs Admin Dashboard"
       />
-      <PageBreadcrumb pageTitle="Services" />
-      <div className="space-y-6">
-        {/* Add Service Button Below Breadcrumb */}
-        <div className="flex justify-end">
+      <div className="flex justify-between items-center mb-4">
+        <PageBreadcrumb pageTitle="Services" />
+        <div className="flex gap-2">
           <Button
             variant="primary"
+            size="sm"
             onClick={handleCreateClick}
-            className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700"
+            className="px-4 py-2 text-black! border-gray-200 bg-white hover:bg-gray-50! border dark:border-gray-800"
             aria-label="Add new service"
+            disabled={!parentId} // Disable if parentId is not available
           >
             Add Service
           </Button>
         </div>
+      </div>
+      <div className="space-y-6">
+        {error && <div className="text-red-600 dark:text-red-400 mb-4">{error}</div>}
         <ComponentCard title="Services Table">
-          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.5] dark:bg-white/[0.3]">
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
             <div className="max-w-full overflow-x-auto">
               <Table>
                 {/* Table Header */}
-                <TableHeader className="border-b border-gray-100 dark:border-white/[0.5]">
+                <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                   <TableRow>
                     <TableCell
                       isHeader
@@ -241,7 +259,7 @@ export default function ServicesTable() {
                 </TableHeader>
 
                 {/* Table Body */}
-                <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.5]">
+                <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                   {paginatedData.length > 0 ? (
                     paginatedData.map((service, index) => (
                       <TableRow key={service._id}>
@@ -259,6 +277,7 @@ export default function ServicesTable() {
                             variant="outline"
                             size="sm"
                             onClick={() => toggleMenu(service._id)}
+                            disabled={loading} // Disable actions during loading
                           >
                             <MoreVertical className="size-5 text-gray-500 dark:text-gray-400" />
                           </Button>
@@ -289,7 +308,7 @@ export default function ServicesTable() {
                   ) : (
                     <TableRow>
                       <TableCell
-                       
+                        colSpan={4}
                         className="px-5 py-4 text-center text-gray-500 text-theme-sm dark:text-gray-400"
                       >
                         No services available
@@ -313,6 +332,7 @@ export default function ServicesTable() {
                   size="sm"
                   onClick={goToPreviousPage}
                   disabled={currentPage === 1}
+                  className="px-4 py-2 text-black! border-gray-200 bg-white hover:bg-gray-50! border dark:border-gray-800"
                 >
                   Previous
                 </Button>
@@ -332,8 +352,8 @@ export default function ServicesTable() {
                       onClick={() => goToPage(page as number)}
                       className={
                         page === currentPage
-                          ? 'bg-[#1D3A76] text-white'
-                          : 'text-gray-500'
+                          ? 'px-4 py-2 text-black! border-gray-200 bg-white hover:bg-gray-50! border dark:border-gray-800'
+                          : 'px-4 py-2 text-black! border-gray-200 bg-white hover:bg-gray-50! border dark:border-gray-800'
                       }
                     >
                       {page}
@@ -345,6 +365,7 @@ export default function ServicesTable() {
                   size="sm"
                   onClick={goToNextPage}
                   disabled={currentPage === totalPages}
+                  className="px-4 py-2 text-black! border-gray-200 bg-white hover:bg-gray-50! border dark:border-gray-800"
                 >
                   Next
                 </Button>

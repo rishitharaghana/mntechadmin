@@ -83,10 +83,12 @@ export default function ServiceSectionTable() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Toggle dropdown menu
   const toggleMenu = (id: string) => {
     setActiveMenu(activeMenu === id ? null : id);
   };
 
+  // Handle Edit action
   const handleEditClick = (item: TableItem) => {
     console.log('Edit item:', item);
     navigate(`/it-services/edit/${item.type.toLowerCase()}/${item._id}`, {
@@ -95,6 +97,7 @@ export default function ServiceSectionTable() {
     setActiveMenu(null);
   };
 
+  // Handle Create action
   const handleCreateClick = (type: 'Service' | 'Product') => {
     if (!sectionId) {
       setError('Section ID is not available');
@@ -105,6 +108,7 @@ export default function ServiceSectionTable() {
     });
   };
 
+  // Handle Delete action
   const handleDeleteClick = async (item: TableItem) => {
     if (!sectionId) {
       setError('Section ID is not available');
@@ -112,6 +116,7 @@ export default function ServiceSectionTable() {
     }
     if (window.confirm(`Are you sure you want to delete this ${item.type.toLowerCase()}?`)) {
       try {
+        // Fix: Use 'itServices' instead of 'services' for Service type
         const type = item.type === 'Service' ? 'itServices' : 'products';
         const endpoint = `/dynamic/serviceSection/${sectionId}/${type}/${item._id}`;
         await ngrokAxiosInstance.delete(endpoint);
@@ -125,6 +130,7 @@ export default function ServiceSectionTable() {
     setActiveMenu(null);
   };
 
+  // Show loader or error
   if (loading) {
     return (
       <>
@@ -161,7 +167,7 @@ export default function ServiceSectionTable() {
             size="sm"
             onClick={() => handleCreateClick('Service')}
             className="px-4 py-2 text-black! border-gray-200 bg-white hover:bg-gray-50! border dark:border-gray-800"
-            disabled={!sectionId}
+            disabled={!sectionId} // Disable if sectionId is not available
           >
             Create New Service
           </Button>
