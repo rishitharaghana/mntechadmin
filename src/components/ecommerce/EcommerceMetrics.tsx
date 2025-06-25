@@ -54,19 +54,14 @@ export default function EcommerceMetrics() {
   if (loading) {
     return (
       <>
-        <PageMeta
-          title="React.js Metrics Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-          description="This is React.js Metrics Dashboard page for TailAdmin - MN techs Admin Dashboard"
-        />
-        <PageBreadcrumb pageTitle="Metrics" />
-        <div className="space-y-6">
-          <ComponentCard title="Ecommerce Metrics">
+       
+       
             <div className="flex justify-center items-center h-64">
               <Loader2 className="size-6 text-gray-500 animate-spin" />
               <span className="ml-2 text-gray-500">Loading...</span>
             </div>
-          </ComponentCard>
-        </div>
+          
+        
       </>
     );
   }
