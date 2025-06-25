@@ -8,7 +8,7 @@ export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Retrieve user data from localStorage
+ 
   const user = localStorage.getItem("user");
   const userData = user ? JSON.parse(user) : null;
 
@@ -20,11 +20,11 @@ export default function UserDropdown() {
     setIsOpen(false);
   }
 
-  // Handle sign-out
+ 
   function handleSignOut() {
-    localStorage.removeItem("user"); // Clear user data
-    closeDropdown(); // Close the dropdown
-    navigate("/signin"); // Navigate to sign-in page
+    localStorage.removeItem("user"); 
+    closeDropdown(); 
+    navigate("/signin"); 
   }
 
   return (
