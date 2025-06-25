@@ -40,6 +40,7 @@ interface TableItem extends Item {
 
 export default function ServiceSectionTable() {
   const [items, setItems] = useState<TableItem[]>([]);
+  const [sectionId, setSectionId] = useState<string | null>(null);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null); // Added for error handling
@@ -47,6 +48,7 @@ export default function ServiceSectionTable() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Fetch service section data
   useEffect(() => {
     const fetchServiceSection = async () => {
       try {
@@ -54,7 +56,7 @@ export default function ServiceSectionTable() {
         setError(null);
         const response = await ngrokAxiosInstance.get('/dynamic/serviceSection');
         const data: ServiceSection = response.data;
-        setParentId(data._id);
+        setSectionId(data._id);
         const combinedItems: TableItem[] = [
           ...data.itServices.map((item) => ({ ...item, type: 'Service' as const })),
           ...data.products.map((item) => ({ ...item, type: 'Product' as const })),
@@ -70,10 +72,7 @@ export default function ServiceSectionTable() {
     fetchServiceSection();
   }, [location.state?.refetch]);
 
-  const toggleMenu = (id: string) => {
-    setActiveMenu(activeMenu === id ? null : id);
-  };
-
+  // Handle click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -84,14 +83,18 @@ export default function ServiceSectionTable() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const toggleMenu = (id: string) => {
+    setActiveMenu(activeMenu === id ? null : id);
+  };
+
   const handleEditClick = (item: TableItem) => {
+    console.log('Edit item:', item);
     navigate(`/it-services/edit/${item.type.toLowerCase()}/${item._id}`, {
-      state: { parentId },
+      state: { parentId: sectionId },
     });
     setActiveMenu(null);
   };
 
-  // Handle Create action
   const handleCreateClick = (type: 'Service' | 'Product') => {
     if (!sectionId) {
       setError('Section ID is not available');
@@ -102,7 +105,6 @@ export default function ServiceSectionTable() {
     });
   };
 
-  // Handle Delete action
   const handleDeleteClick = async (item: TableItem) => {
     if (!sectionId) {
       setError('Section ID is not available');
@@ -110,7 +112,6 @@ export default function ServiceSectionTable() {
     }
     if (window.confirm(`Are you sure you want to delete this ${item.type.toLowerCase()}?`)) {
       try {
-        // Fix: Use 'itServices' instead of 'services' for Service type
         const type = item.type === 'Service' ? 'itServices' : 'products';
         const endpoint = `/dynamic/serviceSection/${sectionId}/${type}/${item._id}`;
         await ngrokAxiosInstance.delete(endpoint);
@@ -120,35 +121,38 @@ export default function ServiceSectionTable() {
         console.error(`Error deleting ${item.type.toLowerCase()}:`, error);
         setError(error.response?.data?.error || `Failed to delete ${item.type.toLowerCase()}`);
       }
-      setActiveMenu(null);
     }
+    setActiveMenu(null);
   };
 
-  const handleCreateClick = () => {
-    navigate('/it-services/create', { state: { parentId } });
-  };
-
-  // Show loader or error
   if (loading) {
     return (
       <>
-        <PageMeta title="React.js Service Section Dashboard | TailAdmin" description="Service Section Dashboard" />
+        <PageMeta
+          title="Service Section Dashboard | TailAdmin - Next.js Admin Dashboard Template"
+          description="Service Section Dashboard page for TailAdmin"
+        />
         <div className="flex justify-between items-baseline mb-4">
           <PageBreadcrumb pageTitle="Service Section" />
         </div>
-        <ComponentCard title="Service Section Table">
-          <div className="flex justify-center items-center h-64">
-            <Loader2 className="size-6 text-gray-500 animate-spin" />
-            <span className="ml-2 text-gray-500">Loading...</span>
-          </div>
-        </ComponentCard>
+        <div className="space-y-6">
+          <ComponentCard title="Service Section Table">
+            <div className="flex justify-center items-center h-64">
+              <Loader2 className="size-6 text-gray-500 animate-spin" />
+              <span className="ml-2 text-gray-500">Loading...</span>
+            </div>
+          </ComponentCard>
+        </div>
       </>
     );
   }
 
   return (
     <>
-      <PageMeta title="React.js Service Section Dashboard | TailAdmin" description="Service Section Dashboard" />
+      <PageMeta
+        title="Service Section Dashboard | TailAdmin - Next.js Admin Dashboard Template"
+        description="Service Section Dashboard page for TailAdmin"
+      />
       <div className="flex justify-between items-center mb-4">
         <PageBreadcrumb pageTitle="Service Section" />
         <div className="flex gap-2">
@@ -157,7 +161,7 @@ export default function ServiceSectionTable() {
             size="sm"
             onClick={() => handleCreateClick('Service')}
             className="px-4 py-2 text-black! border-gray-200 bg-white hover:bg-gray-50! border dark:border-gray-800"
-            disabled={!sectionId} // Disable if sectionId is not available
+            disabled={!sectionId}
           >
             Create New Service
           </Button>
