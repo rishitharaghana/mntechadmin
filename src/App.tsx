@@ -48,9 +48,9 @@ export default function App() {
             <Route path="/form-elements" element={<FormElements />} />
            
 
-            <Route path="/it-services" element={<ITServices />}/>
-            <Route path="/it-services/edit/:id" element={<EditITServices />}/>
-            <Route path="/it-services/create" element={<AddITServices />} />
+           <Route path="/it-services" element={<ITServices />} />
+          <Route path="/it-services/edit/:id" element={<EditITServices />} />
+          <Route path="/it-services/create" element={<AddITServices />} />
            
             <Route path="/basic-tables" element={<BasicTables />} />
             <Route path="/reviews/edit/:id" element={<EditReview />} />

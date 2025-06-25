@@ -1,27 +1,29 @@
+// components/AddITServices.tsx
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router';
+import { useParams, useNavigate, useLocation } from 'react-router';
 import ngrokAxiosInstance from '../../hooks/axiosInstance';
 import ComponentCard from '../../components/common/ComponentCard';
 import Label from '../../components/form/Label';
 import Input from '../../components/form/input/InputField';
 import Button from '../../components/ui/button/Button';
+import { Loader2 } from 'lucide-react';
+
 import PageMeta from '../../components/common/PageMeta';
 import PageBreadcrumb from '../../components/common/PageBreadCrumb';
 
-// Define the ITService interface for form data
-interface ITServiceFormData {
+interface Item {
   title: string;
   description: string;
   icon: string;
 }
 
 export default function AddITServices() {
+  const { type } = useParams<{ type: string }>(); // 'service' or 'product'
   const navigate = useNavigate();
   const { state } = useLocation();
-  const parentId = state?.parentId || '68563d750ea11f5d6792298a'; // Fallback to hardcoded ID
+  const parentId = state?.parentId || '685850e7be8c11851011c83a'; // Fallback ID
 
-  // State for form fields
-  const [formData, setFormData] = useState<ITServiceFormData>({
+  const [formData, setFormData] = useState<Item>({
     title: '',
     description: '',
     icon: '',
@@ -29,77 +31,42 @@ export default function AddITServices() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Warn if parentId is missing
-  React.useEffect(() => {
-    if (!state?.parentId) {
-      console.warn('parentId not provided; using fallback ID:', parentId);
-    }
-  }, [state, parentId]);
-
-  // Handle input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle submit action
-  const handleSubmit = async () => {
-    if (!formData.title.trim()) {
-      setError('IT Service title is required');
-      return;
-    }
-    if (formData.title.length > 100) {
-      setError('IT Service title must be 100 characters or less');
-      return;
-    }
-    if (!formData.description.trim()) {
-      setError('IT Service description is required');
-      return;
-    }
-    if (formData.description.length > 500) {
-      setError('IT Service description must be 500 characters or less');
-      return;
-    }
-    if (!formData.icon.trim()) {
-      setError('Icon is required');
-      return;
-    }
-    if (formData.icon.length > 50) {
-      setError('Icon name must be 50 characters or less');
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.title || !formData.description || !formData.icon) {
+      setError('All fields are required');
       return;
     }
 
     setLoading(true);
     setError(null);
     try {
-      await ngrokAxiosInstance.post(`/dynamic/serviceSection/${parentId}/itServices`, {
-        title: formData.title,
-        description: formData.description,
-        icon: formData.icon,
-      });
-      alert('IT Service added successfully!');
-      navigate(-1, { state: { refresh: true } }); // Signal refresh
+      const endpoint = `/dynamic/serviceSection/${parentId}/${type}s`;
+      await ngrokAxiosInstance.post(endpoint, formData);
+      alert(`${type} created successfully!`);
+      navigate('/it-services');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to add IT service');
-      console.error('Error adding IT service:', err);
+      setError(err.response?.data?.error || `Failed to create ${type}`);
+      console.error(`Error creating ${type}:`, err);
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle cancel action
   const handleCancel = () => {
-    navigate(-1);
+    navigate('/it-services');
   };
 
   return (
     <>
       <PageMeta
-        title="React.js Add IT Service | TailAdmin - Next.js Admin Dashboard Template"
-        description="This is React.js Add IT Service page for TailAdmin - MN techs Admin Dashboard"
+        title={`Create ${type} | TailAdmin`}
+        description={`Create a new ${type} item`}
       />
       <div className="flex justify-between items-center mb-4">
         <PageBreadcrumb pageTitle="Add IT Service" />

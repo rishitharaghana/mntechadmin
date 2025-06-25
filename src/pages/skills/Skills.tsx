@@ -98,10 +98,10 @@ export default function SkillsTable() {
   };
 
   // Handle Edit action
-  const handleEditClick = (skill: Skill) => {
-    navigate(`/skills/edit/${skill._id}`, { state: { parentId } });
-    setActiveMenu(null);
-  };
+ const handleEditClick = (skill: Skill) => {
+  navigate(`/skills/edit/${skill._id}`, { state: { parentId } });
+  setActiveMenu(null);
+};
 
   // Handle Delete action
   const handleDeleteClick = async (skill: Skill) => {
@@ -217,7 +217,7 @@ export default function SkillsTable() {
                           {activeMenu === skill._id && (
                             <div
                               ref={dropdownRef}
-                              className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-10"
+                              className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-5"
                             >
                               <div className="py-2">
                                 <button
