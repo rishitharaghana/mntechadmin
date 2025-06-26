@@ -105,7 +105,6 @@ export default function EditSkills() {
     }
   };
 
-  // Handle cancel action
   const handleCancel = () => {
     navigate('/skills');
   };
