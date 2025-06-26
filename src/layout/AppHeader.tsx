@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-
 import { Link } from "react-router";
 import { useSidebar } from "../context/SidebarContext";
 import { ThemeToggleButton } from "../components/common/ThemeToggleButton";
@@ -7,13 +6,12 @@ import UserDropdown from "../components/header/UserDropdown";
 
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
-
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
 
   const handleToggle = () => {
     if (window.innerWidth >= 1024) {
       toggleSidebar();
-    } else {  
+    } else {
       toggleMobileSidebar();
     }
   };
@@ -83,16 +81,18 @@ const AppHeader: React.FC = () => {
           </button>
 
           <Link to="/" className="lg:hidden">
-            <img
-              className="dark:hidden"
-              src="./images/mntech.png"
-              alt="Logo"
-            />
-            <img
-              className="hidden dark:block"
-              src="./images/mntech.png"
-              alt="Logo"
-            />
+            <div className="flex items-center">
+              <img
+                className="h-6 w-auto max-w-[120px] sm:h-10 sm:max-w-[140px] md:h-10 md:max-w-[160px] object-contain dark:hidden"
+                src="./images/mntech.png"
+                alt="Logo"
+              />
+              <img
+                className="h-6 w-auto max-w-[120px] sm:h-10 sm:max-w-[140px] md:h-10 md:max-w-[160px] object-contain hidden dark:block"
+                src="./images/mntech.png"
+                alt="Logo"
+              />
+            </div>
           </Link>
 
           <button
