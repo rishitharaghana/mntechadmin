@@ -264,7 +264,6 @@ export default function ReachUsTable() {
             </div>
           </div>
 
-          {/* Pagination Controls */}
           {totalItems > itemsPerPage && (
             <div className="flex flex-col sm:flex-row justify-between items-center mt-4 px-4 py-2 gap-4">
               <div className="text-sm text-gray-500 dark:text-gray-400">
