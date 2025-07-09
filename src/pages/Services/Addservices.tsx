@@ -89,12 +89,25 @@ export default function AddServices() {
       );
       alert('Service added successfully!');
       navigate('/services', { state: { refresh: true } });
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to add service item');
-      console.error('Error adding service item:', err);
-    } finally {
-      setLoading(false);
+    } catch (err: unknown) {
+      console.error("Login error:", err);
+      
+      if (err && typeof err === "object" && "response" in err) {
+        const errorObj = err as {
+          response?: {
+            data?: {
+              error?: string;
+            };
+          };
+        };
+        setError(
+          errorObj.response?.data?.error || "Login failed. Please try again."
+        );
+      } else {
+        setError("Login failed. Please try again.");
+      }
     }
+    
   };
 
   // Handle cancel action
