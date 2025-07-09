@@ -45,14 +45,26 @@ export default function SignInForm() {
 
       // Navigate to dashboard
       navigate("/");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Login error:", err);
-      setError(
-        err.response?.data?.error || "Login failed. Please try again."
-      );
-    } finally {
-      setLoading(false);
+      
+      if (err && typeof err === "object" && "response" in err) {
+        const errorObj = err as {
+          response?: {
+            data?: {
+              error?: string;
+            };
+          };
+        };
+        setError(
+          errorObj.response?.data?.error || "Login failed. Please try again."
+        );
+      } else {
+        setError("Login failed. Please try again.");
+      }
     }
+    
+   
   };
 
   return (
