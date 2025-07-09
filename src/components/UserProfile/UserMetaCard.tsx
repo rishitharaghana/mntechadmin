@@ -2,7 +2,6 @@ export default function UserMetaCard() {
   const user = localStorage.getItem("user");
   const userData = user ? JSON.parse(user) : null;
 
-  // Get the first letter of the user's name in uppercase, or fallback to 'G' for Guest
   const firstLetter = userData ? userData.name.charAt(0).toUpperCase() : 'G';
 
   return (

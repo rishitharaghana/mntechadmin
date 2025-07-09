@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <>
       <PageMeta
-        title=" MN techs Dashboard"
+        title=" MN Techs Dashboard"
         description="This is MN techs Dashboard Dashboard page"
       />
       <div className="grid grid-cols-12 gap-4 md:gap-6">

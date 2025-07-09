@@ -66,8 +66,8 @@ export default function EcommerceMetrics() {
     return (
       <>
         <PageMeta
-          title="React.js Metrics Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-          description="This is React.js Metrics Dashboard page for TailAdmin - MN techs Admin Dashboard"
+          title="MnTechs Solutions Pvt Ltd"
+          description="This is  MN techs Admin Dashboard"
         />
         <PageBreadcrumb pageTitle="Metrics" />
         <div className="space-y-6">

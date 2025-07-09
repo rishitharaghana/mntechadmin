@@ -32,7 +32,6 @@ export default function AddSkills() {
     }
   }, [state, parentId]);
 
-  // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -41,7 +40,6 @@ export default function AddSkills() {
     }));
   };
 
-  // Handle submit action
   const handleSubmit = async () => {
     if (!formData.name.trim()) {
       setError('Skill name is required');

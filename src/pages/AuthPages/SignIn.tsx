@@ -1,14 +1,14 @@
-import PageMeta from "../../components/common/PageMeta";
+// import PageMeta from "../../components/common/PageMeta";
 import AuthLayout from "./AuthPageLayout";
 import SignInForm from "../../components/auth/SignInForm";
 
 export default function SignIn() {
   return (
     <>
-      <PageMeta
-        title="React.js SignIn Dashboard | TailAdmin - Next.js Admin Dashboard Template"
+      {/* <PageMeta
+        title="MnTechs Solutions Pvt Ltd Signin "
         description="This is React.js SignIn Tables Dashboard page for TailAdmin - MN techs Admin Dashboard"
-      />
+      /> */}
       <AuthLayout>
         <SignInForm />
       </AuthLayout>
