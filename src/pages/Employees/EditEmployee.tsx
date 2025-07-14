@@ -1,104 +1,103 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router'; 
+import { useParams, useNavigate } from 'react-router';
 import ngrokAxiosInstance from '../../hooks/axiosInstance';
 import ComponentCard from '../../components/common/ComponentCard';
 import Label from '../../components/form/Label';
 import Input from '../../components/form/input/InputField';
 import Button from '../../components/ui/button/Button';
 
-// Define the Employee interface based on the API data structure
-interface Employee {
-  _id: string;
-  name: string;
-  designation: string;
-  linkedin_url: string;
-  twitter_url: string;
-  instagram_url: string;
-  image: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-}
-
 export default function EditEmployee() {
-  // Get employee ID from URL params
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // State for form fields
-  const [employee, setEmployee] = useState<Employee | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     designation: '',
     linkedin_url: '',
     twitter_url: '',
     instagram_url: '',
+    image: null as File | string | null, 
   });
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  // Fetch employee data on component mount
+  const [existingImage, setExistingImage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     const fetchEmployee = async () => {
       try {
         const response = await ngrokAxiosInstance.get(`/dynamic/team/${id}`);
-        setEmployee(response.data);
+        const data = response.data;
+
         setFormData({
-          name: response.data.name,
-          designation: response.data.designation,
-          linkedin_url: response.data.linkedin_url,
-          twitter_url: response.data.twitter_url,
-          instagram_url: response.data.instagram_url,
+          name: data.name,
+          designation: data.designation,
+          linkedin_url: data.linkedin_url,
+          twitter_url: data.twitter_url,
+          instagram_url: data.instagram_url,
+          image: data.image,
         });
+
+        setExistingImage(data.image);
       } catch (err) {
-        setError('Failed to fetch employee data');
-        console.error('Error fetching employee:', err);
-      } finally {
-        setLoading(false);
+        setError('Failed to load employee');
+        console.error('Fetch error:', err);
       }
     };
-    if (id) {
-      fetchEmployee();
-    }
+
+    if (id) fetchEmployee();
   }, [id]);
 
-  // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Handle submit action
-  const handleSubmit = async () => {
-    try {
-      await ngrokAxiosInstance.put(`/dynamic/team/${id}`, {
-        name: formData.name,
-        designation: formData.designation,
-        linkedin_url: formData.linkedin_url,
-        twitter_url: formData.twitter_url,
-        instagram_url: formData.instagram_url,
-        image: employee?.image || '', // Preserve existing image
-      });
-      alert('Employee updated successfully!');
-      navigate(-1); // Navigate back to previous page
-    } catch (err) {
-      setError('Failed to update employee');
-      console.error('Error updating employee:', err);
+    const { name, value, files } = e.target;
+    if (name === 'image' && files) {
+      setFormData((prev) => ({ ...prev, image: files[0] }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-  // Handle cancel action
-  const handleCancel = () => {
-    navigate(-1); // Navigate back to previous page
-  };
-
-  if (loading) {
-    return <div>Loading...</div>;
+ const handleSubmit = async () => {
+  const { name, designation, image } = formData;
+  if (!name.trim() || !designation.trim()) {
+    setError('Name and designation are required.');
+    return;
   }
 
-  if (error || !employee) {
-    return <div>{error || 'Employee not found'}</div>;
+  setError(null);
+  setLoading(true);
+
+  try {
+    const data = new FormData();
+
+    data.append('name', name);
+    data.append('designation', designation);
+    data.append('linkedin_url', formData.linkedin_url);
+    data.append('twitter_url', formData.twitter_url);
+    data.append('instagram_url', formData.instagram_url);
+
+    if (image instanceof File) {
+      data.append('image', image);
+    }
+
+    await ngrokAxiosInstance.put(`/dynamic/team/${id}`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    alert('Employee updated successfully!');
+    navigate(-1, { state: { refresh: true } });
+  } catch (err: any) {
+    console.error('Update error:', err);
+    setError(err.response?.data?.message || 'Failed to update employee');
+  } finally {
+    setLoading(false);
   }
+};
+
+
+  const handleCancel = () => navigate(-1);
 
   return (
     <ComponentCard title="Edit Employee">
@@ -111,9 +110,11 @@ export default function EditEmployee() {
             name="name"
             value={formData.name}
             onChange={handleInputChange}
-            placeholder="Enter employee name"
+            placeholder="Enter name"
+            disabled={loading}
           />
         </div>
+
         <div>
           <Label htmlFor="designation">Designation</Label>
           <Input
@@ -123,8 +124,23 @@ export default function EditEmployee() {
             value={formData.designation}
             onChange={handleInputChange}
             placeholder="Enter designation"
+            disabled={loading}
           />
         </div>
+
+        <div>
+          <Label htmlFor="image">Profile Image</Label>
+          <Input
+            type="file"
+            id="image"
+            name="image"
+            accept="image/*"
+            onChange={handleInputChange}
+            disabled={loading}
+          />
+       
+        </div>
+
         <div>
           <Label htmlFor="linkedin_url">LinkedIn URL</Label>
           <Input
@@ -133,9 +149,11 @@ export default function EditEmployee() {
             name="linkedin_url"
             value={formData.linkedin_url}
             onChange={handleInputChange}
-            placeholder="Enter LinkedIn URL"
+            placeholder="https://linkedin.com/in/..."
+            disabled={loading}
           />
         </div>
+
         <div>
           <Label htmlFor="twitter_url">Twitter URL</Label>
           <Input
@@ -144,9 +162,11 @@ export default function EditEmployee() {
             name="twitter_url"
             value={formData.twitter_url}
             onChange={handleInputChange}
-            placeholder="Enter Twitter URL"
+            placeholder="https://twitter.com/..."
+            disabled={loading}
           />
         </div>
+
         <div>
           <Label htmlFor="instagram_url">Instagram URL</Label>
           <Input
@@ -155,17 +175,19 @@ export default function EditEmployee() {
             name="instagram_url"
             value={formData.instagram_url}
             onChange={handleInputChange}
-            placeholder="Enter Instagram URL"
+            placeholder="https://instagram.com/..."
+            disabled={loading}
           />
         </div>
-        {error && (
-          <div className="text-red-500 text-sm">{error}</div>
-        )}
+
+        {error && <div className="text-red-500 text-sm">{error}</div>}
+
         <div className="flex gap-4">
           <Button
             variant="outline"
             onClick={handleCancel}
             className="px-4 py-2 text-gray-700 dark:text-gray-200"
+            disabled={loading}
           >
             Cancel
           </Button>
@@ -173,8 +195,9 @@ export default function EditEmployee() {
             variant="primary"
             onClick={handleSubmit}
             className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700"
+            disabled={loading}
           >
-            Submit
+            {loading ? 'Updating...' : 'Update'}
           </Button>
         </div>
       </div>
