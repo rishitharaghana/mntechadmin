@@ -5,6 +5,7 @@ import ComponentCard from '../../components/common/ComponentCard';
 import Label from '../../components/form/Label';
 import Input from '../../components/form/input/InputField';
 import Button from '../../components/ui/button/Button';
+import { AxiosError } from 'axios';
 
 export default function EditEmployee() {
   const { id } = useParams<{ id: string }>();
@@ -19,7 +20,7 @@ export default function EditEmployee() {
     image: null as File | string | null, 
   });
 
-  const [existingImage, setExistingImage] = useState<string | null>(null);
+  // const [existingImage, setExistingImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -38,7 +39,7 @@ export default function EditEmployee() {
           image: data.image,
         });
 
-        setExistingImage(data.image);
+        // setExistingImage(data.image);
       } catch (err) {
         setError('Failed to load employee');
         console.error('Fetch error:', err);
@@ -87,9 +88,10 @@ export default function EditEmployee() {
     });
 
     alert('Employee updated successfully!');
-    navigate(-1, { state: { refresh: true } });
-  } catch (err: any) {
-    console.error('Update error:', err);
+    navigate('/employees', { state: { refresh: true } });
+  } catch (error) {
+    const err = error as AxiosError<{ message?: string }>;
+    console.error('Update error:', err.response?.data?.message || err.message);
     setError(err.response?.data?.message || 'Failed to update employee');
   } finally {
     setLoading(false);

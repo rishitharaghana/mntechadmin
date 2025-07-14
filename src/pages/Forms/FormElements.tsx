@@ -15,8 +15,8 @@ export default function FormElements() {
   return (
     <div>
       <PageMeta
-        title="React.js Form Elements Dashboard | MN techs"
-        description="This is React.js Form Elements  Dashboard page for TailAdmin - MN techs Admin Dashboard"
+        title="MnTechs Form Elements Dashboard | MN Techs Solution Pvt Ltd "
+        description="This is MnTechs Form Elements  - MN techs Admin Dashboard"
       />
       <PageBreadcrumb pageTitle="From Elements" />
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">

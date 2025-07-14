@@ -13,6 +13,7 @@ import ngrokAxiosInstance from '../../hooks/axiosInstance';
 import ComponentCard from '../../components/common/ComponentCard';
 import PageBreadcrumb from '../../components/common/PageBreadCrumb';
 import PageMeta from '../../components/common/PageMeta';
+import { AxiosError } from 'axios';
 
 // Define the Skill interface
 interface Skill {
@@ -67,11 +68,13 @@ export default function SkillsTable() {
 
         setSkills(skillsData);
         setParentId(parentIdTemp);
-      } catch (error: any) {
-        console.error('Error fetching skills:', error);
-        setError(error.response?.data?.error || 'Failed to fetch skills');
-        setSkills([]);
-      } finally {
+      } catch (error) {
+  const err = error as AxiosError<{ error: string }>;
+  console.error('Error fetching skills:', err);
+  setError(err.response?.data?.error || 'Failed to fetch skills');
+  setSkills([]);
+}
+ finally {
         setLoading(false);
       }
     };
@@ -125,9 +128,10 @@ export default function SkillsTable() {
         await ngrokAxiosInstance.delete(`/dynamic/ourSkills/${parentId}/skill/${skill._id}`);
         setSkills(skills.filter((s) => s._id !== skill._id));
         console.log('Skill deleted:', skill._id);
-      } catch (error: any) {
-        console.error('Error deleting skill:', error);
-        setError(error.response?.data?.error || 'Failed to delete skill');
+      } catch (error) {
+        const err = error as AxiosError<{error: string}>;
+        console.error('Error deleting skill:', err);
+        setError(err.response?.data?.error || 'Failed to delete skill');
       }
     }
     setActiveMenu(null);
@@ -138,8 +142,8 @@ export default function SkillsTable() {
     return (
       <>
         <PageMeta
-          title="React.js Skills Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-          description="This is React.js Skills Dashboard page for TailAdmin - MN techs Admin Dashboard"
+          title=" MnTechs Skills Dashboard | MN Techs Solution Pvt Ltd  "
+          description="This is MnTechs Skills Dashboard - Mn Techs Admin Dashboard"
         />
         <div className="flex justify-between items-baseline mb-4">
           <PageBreadcrumb pageTitle="Skills" />
@@ -159,8 +163,8 @@ export default function SkillsTable() {
   return (
     <>
       <PageMeta
-        title="React.js Skills Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-        description="This is React.js Skills Dashboard page for TailAdmin - MN techs Admin Dashboard"
+        title="MnTechs Skills Dashboard | MN Techs Solution Pvt Ltd "
+        description="This is MnTechs Skills Dashboard - Mn Techs Admin Dashboard"
       />
       <div className="flex justify-between items-center mb-4">
         <PageBreadcrumb pageTitle="Skills" />
@@ -261,7 +265,7 @@ export default function SkillsTable() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={4} className="px-5 py-4 text-center text-gray-500 text-theme-sm dark:text-gray-400">
+                      <TableCell  className="px-5 py-4 text-center text-gray-500 text-theme-sm dark:text-gray-400">
                         No skills available
                       </TableCell>
                     </TableRow>

@@ -98,8 +98,8 @@ export default function NewsletterSubscribers() {
     return (
       <>
         <PageMeta
-          title="React.js Newsletter Subscribers Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-          description="This is React.js Newsletter Subscribers Dashboard page for TailAdmin - MN techs Admin Dashboard"
+          title="MnTechs Newsletter Subscribers | MN Techs Solution Pvt Ltd "
+          description="This is MnTechs Newsletter Subscribers - Mn Techs Admin Dashboard"
         />
         <PageBreadcrumb pageTitle="Newsletter Subscribers" />
         <div className="space-y-6">
@@ -117,8 +117,8 @@ export default function NewsletterSubscribers() {
   return (
     <>
       <PageMeta
-        title="React.js Newsletter Subscribers Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-        description="This is React.js Newsletter Subscribers Dashboard page for TailAdmin - MN techs Admin Dashboard"
+        title="MnTechs Newsletter Subscribers | MN Techs Solution Pvt Ltd "
+        description="This is MnTechs Newsletter Subscribers - Mn Techs Admin Dashboard"
       />
       <PageBreadcrumb pageTitle="Newsletter Subscribers" />
       <div className="space-y-6">

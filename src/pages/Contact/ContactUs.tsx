@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react"; // Import Loader2 for consistency
 import ngrokAxiosInstance from "../../hooks/axiosInstance";
 import { AxiosError } from "axios";
@@ -125,8 +125,8 @@ export default function ContactList() {
     return (
       <>
         <PageMeta
-          title="React.js Contact List Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-          description="This is React.js Contact List Dashboard page for TailAdmin - MN techs Admin Dashboard"
+          title="MnTechs Contact List Dashboard | MN Techs Solution Pvt Ltd "
+          description="This is MNTechs Contact List - Mn Techs Admin Dashboard"
         />
         <div className="flex justify-between items-baseline mb-4">
           <PageBreadcrumb pageTitle="Contact List" />
@@ -147,8 +147,8 @@ export default function ContactList() {
     return (
       <>
         <PageMeta
-          title="React.js Contact List Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-          description="This is React.js Contact List Dashboard page for TailAdmin - MN techs Admin Dashboard"
+          title="MnTechs Contact List Dashboard | MN Techs Solution Pvt Ltd  "
+          description="This is MN techs  Contact List - Mn Techs Admin Dashboard"
         />
         <div className="flex justify-between items-baseline mb-4">
           <PageBreadcrumb pageTitle="Contact List" />
@@ -167,8 +167,8 @@ export default function ContactList() {
   return (
     <>
       <PageMeta
-        title="React.js Contact List Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-        description="This is React.js Contact List Dashboard page for TailAdmin - MN techs Admin Dashboard"
+        title="MnTechs Contact List | MN Techs Solution Pvt Ltd  "
+        description="This is MnTechs Contact List - Mn Techs Admin Dashboard"
       />
       <div className="flex justify-between items-baseline mb-4">
         <PageBreadcrumb pageTitle="Contact List" />
@@ -249,7 +249,7 @@ export default function ContactList() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell className="px-5 py-4 text-center text-gray-600 text-sm dark:text-gray-400" colSpan={6}>
+                      <TableCell className="px-5 py-4 text-center text-gray-600 text-sm dark:text-gray-400" >
                         No contacts found
                       </TableCell>
                     </TableRow>

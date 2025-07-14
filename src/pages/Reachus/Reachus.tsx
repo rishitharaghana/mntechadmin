@@ -118,8 +118,8 @@ export default function ReachUsTable() {
     return (
       <>
         <PageMeta
-          title="React.js Reach Us Table Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-          description="This is React.js Reach Us Table Dashboard page for TailAdmin - MN techs Admin Dashboard"
+          title="MnTechs Reach Us Table Dashboard  | MN Techs Solution Pvt Ltd "
+          description="This is MnTechs Reach Us Table Dashboard - Mn Techs Admin Dashboard "
         />
         <PageBreadcrumb pageTitle="Reach Us Table" />
         <div className="space-y-6">
@@ -137,8 +137,8 @@ export default function ReachUsTable() {
   return (
     <>
       <PageMeta
-        title="React.js Reach Us Table Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-        description="This is React.js Reach Us Table Dashboard page for TailAdmin - MN techs Admin Dashboard"
+        title="MnTechs Reach Us Table Dashboard | MN Techs Solution Pvt Ltd "
+        description="This is MnTechs Reach Us Table Dashboard - Mn Techs Admin Dashboard"
       />
       <PageBreadcrumb pageTitle="Reach Us Table" />
       <div className="space-y-6">

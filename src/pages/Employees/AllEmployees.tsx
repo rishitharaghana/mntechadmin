@@ -8,6 +8,7 @@ import Button from '../../components/ui/button/Button';
 import ComponentCard from '../../components/common/ComponentCard';
 import PageBreadcrumb from '../../components/common/PageBreadCrumb';
 import PageMeta from '../../components/common/PageMeta';
+import { AxiosError } from 'axios';
 
 // Define the Employee interface based on the API data structure
 interface Employee {
@@ -40,9 +41,10 @@ export default function AllEmployees() {
         setError(null);
         const response = await ngrokAxiosInstance.get('/dynamic/team/');
         setEmployees(response.data);
-      } catch (error: any) {
-        console.error('Error fetching employees:', error);
-        setError(error.response?.data?.error || 'Failed to fetch employees');
+      } catch (error) {
+        const err = error as AxiosError<{error:string}>
+        console.error('Error fetching employees:', err);
+        setError(err.response?.data?.error || 'Failed to fetch employees');
       } finally {
         setLoading(false);
       }
@@ -86,9 +88,10 @@ export default function AllEmployees() {
         await ngrokAxiosInstance.delete(`/dynamic/team/${employee._id}`);
         setEmployees(employees.filter((e) => e._id !== employee._id));
         console.log('Employee deleted:', employee._id);
-      } catch (error: any) {
-        console.error('Error deleting employee:', error);
-        setError(error.response?.data?.error || 'Failed to delete employee');
+      } catch (error) {
+        const err = error as AxiosError<{error:string}>;
+        console.error('Error deleting employee:', err);
+        setError(err.response?.data?.error || 'Failed to delete employee');
       } finally {
         setDeletingId(null);
         setActiveMenu(null);
@@ -103,8 +106,8 @@ export default function AllEmployees() {
     return (
       <>
         <PageMeta
-          title="React.js Employee Tables Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-          description="This is React.js Employee Tables Dashboard page for TailAdmin - MN techs Admin Dashboard"
+          title="MnTechs Employee Table | MN Techs Solution Pvt Ltd "
+          description="This is MnTechs Employee Tables - Mn Techs Admin Dashboard"
         />
         <div className="flex justify-between items-baseline mb-4">
           <PageBreadcrumb pageTitle="Employee Tables" />
@@ -124,8 +127,8 @@ export default function AllEmployees() {
   return (
     <>
       <PageMeta
-        title="React.js Employee Tables Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-        description="This is React.js Employee Tables Dashboard page for TailAdmin - MN techs Admin Dashboard"
+        title="MnTechs Employee Table | MN Techs Solution Pvt Ltd "
+        description="This is MnTechs Employee Table - Mn Techs Admin Dashboard"
       />
       <div className="flex justify-between items-center mb-4">
         <PageBreadcrumb pageTitle="Employee Tables" />
@@ -247,7 +250,7 @@ export default function AllEmployees() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5} className="px-5 py-4 text-center text-gray-500 text-theme-sm dark:text-gray-400">
+                      <TableCell className="px-5 py-4 text-center text-gray-500 text-theme-sm dark:text-gray-400">
                         No employees available
                       </TableCell>
                     </TableRow>

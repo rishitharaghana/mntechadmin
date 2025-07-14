@@ -7,8 +7,8 @@ export default function UserProfiles() {
   return (
     <>
       <PageMeta
-        title="MnTechs Solutions Profile Dashboard "
-        description="This is MN techs Admin Dashboard"
+        title="MnTechs Solutions Profile Dashboard | MN Techs Solution Pvt Ltd "
+        description="This is MN techs Admin Dashboard - Mn Techs Admin Dashboard"
       />
       <PageBreadcrumb pageTitle="Profile" />
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">

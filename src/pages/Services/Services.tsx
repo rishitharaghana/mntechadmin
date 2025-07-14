@@ -13,6 +13,7 @@ import ngrokAxiosInstance from '../../hooks/axiosInstance';
 import ComponentCard from '../../components/common/ComponentCard';
 import PageBreadcrumb from '../../components/common/PageBreadCrumb';
 import PageMeta from '../../components/common/PageMeta';
+import { AxiosError } from 'axios';
 
 // Define the Service interface for individual service entries
 interface IndividualService {
@@ -57,9 +58,10 @@ export default function ServicesTable() {
         const parentIdTemp = response.data[0]?._id || '685a7586a5646909c426b63c';
         setIndividualServices(allServices);
         setParentId(parentIdTemp);
-      } catch (error: any) {
-        console.error('Error fetching services:', error);
-        setError(error.response?.data?.error || 'Failed to fetch services');
+      } catch (error) {
+        const err = error as AxiosError<{error : string}>
+        console.error('Error fetching services:', err);
+        setError(err.response?.data?.error || 'Failed to fetch services');
         setIndividualServices([]);
       } finally {
         setLoading(false);
@@ -115,9 +117,10 @@ export default function ServicesTable() {
         await ngrokAxiosInstance.delete(`/dynamic/service/${parentId}/service-item/${service._id}`);
         setIndividualServices(individualServices.filter((s) => s._id !== service._id));
         console.log('Service item deleted:', service._id);
-      } catch (error: any) {
-        console.error('Error deleting service item:', error);
-        setError(error.response?.data?.error || 'Failed to delete service');
+      } catch (error) {
+        const err = error as AxiosError<{error: string}>
+        console.error('Error deleting service item:', err);
+        setError(err.response?.data?.error || 'Failed to delete service');
       }
       setActiveMenu(null);
     }
@@ -183,8 +186,8 @@ export default function ServicesTable() {
     return (
       <>
         <PageMeta
-          title="React.js Services Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-          description="This is React.js Services Dashboard page for TailAdmin - MN techs Admin Dashboard"
+          title="MnTechs Services Dashboard | MN Techs Solution Pvt Ltd "
+          description="This is MnTechs Services Dashboard - Mn Techs Admin Dashboard"
         />
         <div className="flex justify-between items-baseline mb-4">
           <PageBreadcrumb pageTitle="Services" />
@@ -204,8 +207,8 @@ export default function ServicesTable() {
   return (
     <>
       <PageMeta
-        title="React.js Services Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-        description="This is React.js Services Dashboard page for TailAdmin - MN techs Admin Dashboard"
+        title="MnTechs Services Dashboard | MN Techs Solution Pvt Ltd  "
+        description="This is MnTechs Services Dashboard - Mn Techs Admin Dashboard"
       />
       <div className="flex justify-between items-center mb-4">
         <PageBreadcrumb pageTitle="Services" />
@@ -308,7 +311,7 @@ export default function ServicesTable() {
                   ) : (
                     <TableRow>
                       <TableCell
-                        colSpan={4}
+                        // colSpan={4}
                         className="px-5 py-4 text-center text-gray-500 text-theme-sm dark:text-gray-400"
                       >
                         No services available
