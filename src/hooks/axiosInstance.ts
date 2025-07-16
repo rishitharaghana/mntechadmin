@@ -1,12 +1,13 @@
 import axios, { AxiosInstance } from 'axios';
 
 const ngrokAxiosInstance: AxiosInstance = axios.create({
-  baseURL: 'https://658c5d9c9561.ngrok-free.app',
+    // baseURL: 'https://api.mntechs.com',
+
+ baseURL: 'http://localhost:4001',
 
   headers: { 
-    'Content-Type': 'application/json',
-    'ngrok-skip-browser-warning': 'true',
-  },
+    'Content-Type': 'application/json'
+  },  
 });
 
 export default ngrokAxiosInstance;

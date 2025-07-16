@@ -23,7 +23,7 @@ export default function SignInForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle form submission
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
