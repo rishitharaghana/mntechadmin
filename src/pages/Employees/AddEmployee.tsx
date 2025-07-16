@@ -59,7 +59,12 @@ export default function AddEmployee() {
       });
 
       alert('Employee added successfully!');
-      navigate(-1, { state: { refresh: true } });
+      navigate(-1); 
+      window.history.replaceState(
+        { ...location, refresh: true },
+        '',
+        location.pathname
+      );
     } catch (err: any) {
       console.error('Error adding employee:', err);
       setError(err.response?.data?.message || 'Failed to add employee');

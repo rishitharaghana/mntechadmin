@@ -66,7 +66,12 @@ export default function AddSkills() {
         percentage: formData.percentage,
       });
       alert('Skill added successfully!');
-      navigate(-1, { state: { refresh: true } }); 
+      navigate(-1); 
+      window.history.replaceState(
+        { ...location, refresh: true },
+        '',
+        location.pathname
+      );
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to add skill');
       console.error('Error adding skill:', err);

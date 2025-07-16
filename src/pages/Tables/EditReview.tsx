@@ -17,7 +17,7 @@ interface Review {
   avatar: string;
 }
 
-// Define rating options for the Select component
+
 const ratingOptions = [
   { value: '1', label: '1 Star' },
   { value: '2', label: '2 Stars' },
