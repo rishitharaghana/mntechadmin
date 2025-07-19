@@ -1,6 +1,5 @@
-import { useEffect,  useState } from 'react';
-import {  Loader2 } from 'lucide-react';
-
+import { useEffect, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import ngrokAxiosInstance from '../../hooks/axiosInstance';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '../../components/ui/table';
 import Badge from '../../components/ui/badge/Badge';
@@ -8,6 +7,7 @@ import Button from '../../components/ui/button/Button';
 import ComponentCard from '../../components/common/ComponentCard';
 import PageBreadcrumb from '../../components/common/PageBreadCrumb';
 import PageMeta from '../../components/common/PageMeta';
+import { AxiosError } from 'axios'; // Added for error handling
 
 // Define the ReachUs interface based on the API data structure
 interface ReachUs {
@@ -28,22 +28,23 @@ interface ReachUs {
 
 export default function ReachUsTable() {
   const [reachUsData, setReachUsData] = useState<ReachUs[]>([]);
-  
-  const [loading, setLoading] = useState<boolean>(true); 
- 
-  const [currentPage, setCurrentPage] = useState<number>(1); // State for pagination
-  const itemsPerPage = 10; 
-   
+  const [loading, setLoading] = useState<boolean>(true);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [error, setError] = useState<string | null>(null); // Added for error handling
+  const itemsPerPage = 10;
 
   // Fetch data from the API
   useEffect(() => {
     const fetchReachUs = async () => {
       try {
         setLoading(true);
+        setError(null);
         const response = await ngrokAxiosInstance.get('/reach/getAllReachUs');
         setReachUsData(response.data);
       } catch (error) {
-        console.error('Error fetching ReachUs data:', error);
+        const err = error as AxiosError<{ error: string }>;
+        console.error('Error fetching ReachUs data:', err);
+        setError(err.response?.data?.error || 'Failed to fetch data');
       } finally {
         setLoading(false);
       }
@@ -51,14 +52,7 @@ export default function ReachUsTable() {
     fetchReachUs();
   }, []);
 
-
-
- 
- 
-
-  
-
-
+  // Pagination logic
   const totalItems = reachUsData.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -118,8 +112,8 @@ export default function ReachUsTable() {
     return (
       <>
         <PageMeta
-          title="MnTechs Reach Us Table Dashboard  | MN Techs Solution Pvt Ltd "
-          description="This is MnTechs Reach Us Table Dashboard - Mn Techs Admin Dashboard "
+          title="MnTechs Reach Us Table Dashboard | MN Techs Solution Pvt Ltd"
+          description="This is MnTechs Reach Us Table Dashboard - Mn Techs Admin Dashboard"
         />
         <PageBreadcrumb pageTitle="Reach Us Table" />
         <div className="space-y-6">
@@ -137,128 +131,138 @@ export default function ReachUsTable() {
   return (
     <>
       <PageMeta
-        title="MnTechs Reach Us Table Dashboard | MN Techs Solution Pvt Ltd "
+        title="MnTechs Reach Us Table Dashboard | MN Techs Solution Pvt Ltd"
         description="This is MnTechs Reach Us Table Dashboard - Mn Techs Admin Dashboard"
       />
       <PageBreadcrumb pageTitle="Reach Us Table" />
       <div className="space-y-6">
+        {error && <div className="text-red-600 dark:text-red-400 mb-4">{error}</div>}
         <ComponentCard title="Reach Us Table">
           <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
             <div className="max-w-full overflow-x-auto">
-              <Table>
+              <Table className="table-auto w-full">
                 <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                   <TableRow>
                     <TableCell
                       isHeader
-                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 align-middle whitespace-nowrap"
                     >
                       Sl.No
                     </TableCell>
                     <TableCell
                       isHeader
-                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 align-middle whitespace-nowrap"
                     >
                       First Name
                     </TableCell>
                     <TableCell
                       isHeader
-                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 align-middle whitespace-nowrap"
                     >
                       Last Name
                     </TableCell>
                     <TableCell
                       isHeader
-                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 align-middle whitespace-nowrap"
                     >
                       Email
                     </TableCell>
                     <TableCell
                       isHeader
-                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 align-middle whitespace-nowrap"
                     >
                       Company
                     </TableCell>
                     <TableCell
                       isHeader
-                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 align-middle whitespace-nowrap"
                     >
                       Phone
                     </TableCell>
                     <TableCell
                       isHeader
-                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 align-middle whitespace-nowrap"
                     >
                       Role
                     </TableCell>
                     <TableCell
                       isHeader
-                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 align-middle whitespace-nowrap"
                     >
                       Product Design
                     </TableCell>
                     <TableCell
                       isHeader
-                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 align-middle whitespace-nowrap"
                     >
                       Product Description
                     </TableCell>
                     <TableCell
                       isHeader
-                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 align-middle whitespace-nowrap"
                     >
                       Project Budget
                     </TableCell>
                     <TableCell
                       isHeader
-                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 align-middle whitespace-nowrap"
                     >
                       Created At
                     </TableCell>
-                   
                   </TableRow>
                 </TableHeader>
 
                 <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                  {paginatedData.map((reachUs, index) => (
-                    <TableRow key={reachUs._id}>
-                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                        {startIndex + index + 1}
+                  {paginatedData.length > 0 ? (
+                    paginatedData.map((reachUs, index) => (
+                      <TableRow key={reachUs._id}>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400 align-middle whitespace-nowrap">
+                          {startIndex + index + 1}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400 align-middle whitespace-nowrap truncate max-w-[150px]">
+                          {reachUs.first_name}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400 align-middle whitespace-nowrap truncate max-w-[150px]">
+                          {reachUs.last_name}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400 align-middle whitespace-nowrap truncate max-w-[200px]">
+                          {reachUs.email}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400 align-middle whitespace-nowrap truncate max-w-[150px]">
+                          {reachUs.company}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400 align-middle whitespace-nowrap truncate max-w-[150px]">
+                          {reachUs.phone}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400 align-middle whitespace-nowrap">
+                          <Badge size="sm" color="success">
+                            {reachUs.role}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400 align-middle whitespace-nowrap truncate max-w-[200px]">
+                          {reachUs.product_design}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400 align-middle whitespace-nowrap truncate max-w-[250px]">
+                          {reachUs.product_description}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400 align-middle whitespace-nowrap truncate max-w-[150px]">
+                          {reachUs.project_budget}
+                        </TableCell>
+                        <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400 align-middle whitespace-nowrap">
+                          {new Date(reachUs.createdAt).toLocaleDateString()}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan={11}
+                        className="px-5 py-4 text-center text-gray-500 text-theme-sm29-sm dark:text-gray-400"
+                      >
+                        No data available
                       </TableCell>
-                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                        {reachUs.first_name}
-                      </TableCell>
-                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                        {reachUs.last_name}
-                      </TableCell>
-                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                        {reachUs.email}
-                      </TableCell>
-                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                        {reachUs.company}
-                      </TableCell>
-                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                        {reachUs.phone}
-                      </TableCell>
-                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                        <Badge size="sm" color="success">
-                          {reachUs.role}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                        {reachUs.product_design}
-                      </TableCell>
-                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                        {reachUs.product_description}
-                      </TableCell>
-                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                        {reachUs.project_budget}
-                      </TableCell>
-                      <TableCell className="px-5 py-4 sm:px-6 text-start text-gray-500 text-theme-sm dark:text-gray-400">
-                        {new Date(reachUs.createdAt).toLocaleDateString()}
-                      </TableCell>
-                     
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
             </div>
@@ -275,6 +279,7 @@ export default function ReachUsTable() {
                   size="sm"
                   onClick={goToPreviousPage}
                   disabled={currentPage === 1}
+                  className="px-4 py-2 text-black! border-gray-200 bg-white hover:bg-gray-50! border dark:border-gray-800"
                 >
                   Previous
                 </Button>
@@ -294,8 +299,8 @@ export default function ReachUsTable() {
                       onClick={() => goToPage(page as number)}
                       className={
                         page === currentPage
-                          ? 'bg-[#1D3A76] text-white'
-                          : 'text-gray-500'
+                          ? 'px-4 py-2 bg-[#1D3A76] text-white border-gray-200 hover:bg-gray-50! border dark:border-gray-800'
+                          : 'px-4 py-2 text-black! border-gray-200 bg-white hover:bg-gray-50! border dark:border-gray-800'
                       }
                     >
                       {page}
@@ -307,6 +312,7 @@ export default function ReachUsTable() {
                   size="sm"
                   onClick={goToNextPage}
                   disabled={currentPage === totalPages}
+                  className="px-4 py-2 text-black! border-gray-200 bg-white hover:bg-gray-50! border dark:border-gray-800"
                 >
                   Next
                 </Button>

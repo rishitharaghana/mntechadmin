@@ -12,7 +12,7 @@ export default function UserDropdown() {
   const userData = user ? JSON.parse(user) : null;
 
   // Get the first letter of the user's name in uppercase, or fallback to 'G' for Guest
-  const firstLetter = userData ? userData.name.charAt(0).toUpperCase() : 'G';
+  const firstLetter = userData ? userData.name.charAt(0).toUpperCase() : "G";
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
@@ -35,7 +35,9 @@ export default function UserDropdown() {
         className="flex items-center text-gray-700 dropdown-toggle dark:text-gray-400"
       >
         <span className="mr-3 overflow-hidden rounded-full h-11 w-11 flex items-center justify-center bg-gray-100 dark:bg-gray-700">
-            <span className="text-xl font-semibold text-gray-600 dark:text-gray-300">{firstLetter}</span>
+          <span className="text-xl font-semibold text-gray-600 dark:text-gray-300">
+            {firstLetter}
+          </span>
         </span>
         <span className="block mr-1 font-medium text-theme-sm">
           {userData ? userData.name : "Guest"}
@@ -67,13 +69,23 @@ export default function UserDropdown() {
       >
         {userData ? (
           <>
-            <div>
-              <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
+            <div className="pl-2 pr-1 pb-2 pt-4">
+              <button className="flex items-center text-gray-700 dark:text-gray-400">
+                <span className="mr-3 text-3xl overflow-hidden rounded-full h-11 w-11 flex items-center justify-center bg-gray-100 dark:bg-gray-700">
+                  <span className="text-3xl font-semibold text-gray-600 dark:text-gray-300">
+                    {firstLetter}
+                  </span>
+                </span>
+                <span className="block mr-1 font-medium text-theme-sm">
+                  {userData ? userData.name : "Guest"}
+                </span>
+              </button>
+              {/* <span className="block text-lg font-medium text-gray-700 dark:text-gray-400">
                 {userData.name}
               </span>
-              <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
+              <span className="mt-0.5 block text-1xl text-gray-500 dark:text-gray-400">
                 {userData.number}
-              </span>
+              </span> */}
             </div>
             <ul className="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
               <li>
@@ -94,11 +106,11 @@ export default function UserDropdown() {
                     <path
                       fillRule="evenodd"
                       clipRule="evenodd"
-                      d="M3.5 12C3.5 7.30558 7.30558 3.5 12 3.5C16.6944 3.5 20.5 7.30558 20.5 12C20.5 16.6944 16.6944 20.5 12 20.5C7.30558 20.5 3.5 16.6944 3.5 12ZM12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM11.0991 7.52507C11.0991 8.02213 11.5021 8.42507 11.9991 8.42507H12.0001C12.4972 8.42507 12.9001 8.02213 12.9001 7.52507C12.9001 7.02802 12.4972 6.62507 12.0001 6.62507H11.9991C11.5021 6.62507 11.0991 7.02802 11.0991 7.52507ZM12.0001 17.3714C11.5859 17.3714 11.2501 17.0356 11.2501 16.6214V10.9449C11.2501 10.5307 11.5859 10.1949 12.0001 10.1949C12.4143 10.1949 12.7501 10.5307 12.7501 10.9449V16.6214C12.7501 17.0356 12.4143 17.3714 12.0001 17.3714Z"
+                      d="M12 4C9.87827 4 8.15715 5.84286 8.15715 8C8.15715 10.1571 9.87827 12 12 12C14.1217 12 15.8429 10.1571 15.8429 8C15.8429 5.84286 14.1217 4 12 4ZM6.85715 8C6.85715 5.14286 9.17143 2.7 12 2.7C14.8286 2.7 17.1429 5.14286 17.1429 8C17.1429 10.8571 14.8286 13.3 12 13.3C9.17143 13.3 6.85715 10.8571 6.85715 8ZM4.28571 18.2857C4.28571 16.0857 8.22857 14.2857 12 14.2857C15.7714 14.2857 19.7143 16.0857 19.7143 18.2857V19.3C19.7143 20.7414 18.5714 21.6 17.1429 21.6H6.85715C5.42857 21.6 4.28571 20.7414 4.28571 19.3V18.2857ZM12 15.5857C8.71429 15.5857 5.58571 17.1429 5.58571 18.2857V19.3C5.58571 19.9829 6.17143 20.3 6.85715 20.3H17.1429C17.8286 20.3 18.4143 19.9829 18.4143 19.3V18.2857C18.4143 17.1429 15.2857 15.5857 12 15.5857Z"
                       fill=""
                     />
                   </svg>
-                  Support
+                  User Profile
                 </DropdownItem>
               </li>
             </ul>

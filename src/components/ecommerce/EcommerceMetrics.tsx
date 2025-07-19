@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Loader2, Users, Package, Mail, Phone } from 'lucide-react'; // Importing icons from lucide-react
+import { Link } from 'react-router'; // Correct import for Link
+import { Loader2, Users, Package, Mail, Phone } from 'lucide-react';
 import ngrokAxiosInstance from '../../hooks/axiosInstance';
 import ComponentCard from '../../components/common/ComponentCard';
-import PageBreadcrumb from '../../components/common/PageBreadCrumb';
 import PageMeta from '../../components/common/PageMeta';
+
+  const user = localStorage.getItem("user");
+  const userData = user ? JSON.parse(user) : null;
 
 // Define the interface for the count data
 interface Count {
@@ -37,27 +40,41 @@ export default function EcommerceMetrics() {
   const getIconForType = (type: string) => {
     switch (type) {
       case 'Team Count':
-        return <Users className="text-gray-800 size-6 dark:text-white/90" />; // Icon for team/users
+        return <Users className="text-gray-800 size-6 dark:text-white/90" />;
       case 'Subscribe Count':
-        return <Package className="text-gray-800 size-6 dark:text-white/90" />; // Icon for subscriptions
+        return <Package className="text-gray-800 size-6 dark:text-white/90" />;
       case 'ReachUs Count':
-        return <Mail className="text-gray-800 size-6 dark:text-white/90" />; // Icon for reach us (email)
+        return <Mail className="text-gray-800 size-6 dark:text-white/90" />;
       case 'Contact Us Count':
-        return <Phone className="text-gray-800 size-6 dark:text-white/90" />; // Icon for contact us (phone)
+        return <Phone className="text-gray-800 size-6 dark:text-white/90" />;
       default:
-        return <Users className="text-gray-800 size-6 dark:text-white/90" />; // Fallback icon
+        return <Users className="text-gray-800 size-6 dark:text-white/90" />;
+    }
+  };
+
+  // Map count types to route paths
+  const getRouteForType = (type: string) => {
+    switch (type) {
+      case 'Team Count':
+        return '/employees';
+      case 'Subscribe Count':
+        return '/newLetter/all'; // Corrected from /newLetter/all to /newsletter/all
+      case 'ReachUs Count':
+        return '/reachus';
+      case 'Contact Us Count':
+        return '/contact/contact_us';
+      default:
+        return '#'; // Fallback route
     }
   };
 
   // Show loader while fetching data
   if (loading) {
     return (
-      <>
-        <div className="flex justify-center items-center h-64">
-          <Loader2 className="size-6 text-gray-500 animate-spin" />
-          <span className="ml-2 text-gray-500">Loading...</span>
-        </div>
-      </>
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="size-6 text-gray-500 animate-spin" />
+        <span className="ml-2 text-gray-500">Loading...</span>
+      </div>
     );
   }
 
@@ -67,9 +84,8 @@ export default function EcommerceMetrics() {
       <>
         <PageMeta
           title="MnTechs Solutions Pvt Ltd"
-          description="This is  MN techs Admin Dashboard"
+          description="This is MN techs Admin Dashboard"
         />
-        <PageBreadcrumb pageTitle="Metrics" />
         <div className="space-y-6">
           <ComponentCard title="Ecommerce Metrics">
             <div className="text-red-500 text-center">{error}</div>
@@ -81,12 +97,19 @@ export default function EcommerceMetrics() {
 
   return (
     <>
-      <div className="w-max space-y-6">
+      <PageMeta
+        title="MnTechs Solutions Pvt Ltd"
+        description="This is MN techs Admin Dashboard"
+      />
+      <div className="w-max space-y-6 p-4">
+        <h1 className="text-2xl font-bold text-[#1b7fba] mb-3">Welcome Back, {userData ? userData.name : "Guest User"}!</h1>
+        <p className="text-gray-600 text-sm mb-8">Here's a slightly detailed overview of your team performance and key metrics for the admin panel.</p>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 md:gap-6">
           {counts.map((count, index) => (
-            <div
+            <Link
               key={index}
-              className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
+              to={getRouteForType(count.type)}
+              className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 hover:shadow-md transition-shadow"
             >
               <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
                 {getIconForType(count.type)}
@@ -101,7 +124,7 @@ export default function EcommerceMetrics() {
                   </h4>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
