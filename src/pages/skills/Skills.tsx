@@ -242,17 +242,17 @@ export default function SkillsTable() {
                           {activeMenu === skill._id && (
                             <div
                               ref={dropdownRef}
-                              className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-5"
+                              className="absolute top-0 right-3 mt-2 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-5"
                             >
-                              <div className="py-2">
+                              <div>
                                 <button
-                                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                  className="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                                   onClick={() => handleEditClick(skill)}
                                 >
                                   Edit
                                 </button>
                                 <button
-                                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                  className="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                                   onClick={() => handleDeleteClick(skill)}
                                 >
                                   Delete
