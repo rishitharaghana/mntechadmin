@@ -9,12 +9,18 @@ import PageBreadcrumb from '../../components/common/PageBreadCrumb';
 import PageMeta from '../../components/common/PageMeta';
 import { Loader2 } from 'lucide-react';
 
-
 // Define the Service interface based on the API data structure
 interface Service {
   _id: string;
   title: string;
   description: string;
+  icon?: string;
+}
+
+// Define errors for each field
+interface FormErrors {
+  title?: string;
+  description?: string;
   icon?: string;
 }
 
@@ -29,8 +35,13 @@ export default function EditService() {
     description: '',
     icon: '',
   });
-  const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(true);
+
+  // Validation regex patterns
+  const titleRegex = /^[a-zA-Z\s'-]*$/; // Only letters, spaces, apostrophes, hyphens
+  const descriptionRegex = /^[a-zA-Z0-9\s.,!?'’-]*$/; // Alphanumeric, spaces, common punctuation
+  const iconRegex = /^[a-zA-Z0-9_-]*$/; // Alphanumeric, hyphens, underscores (for icon names)
 
   // Fetch service item data on component mount
   useEffect(() => {
@@ -49,7 +60,7 @@ export default function EditService() {
           icon: response.data.icon || '',
         });
       } catch (err: any) {
-        setError(err.response?.data?.error || 'Failed to fetch service item');
+        setErrors({ title: err.response?.data?.error || 'Failed to fetch service item' });
         console.error('Error fetching service item:', err);
       } finally {
         setLoading(false);
@@ -58,49 +69,75 @@ export default function EditService() {
     fetchServiceItem();
   }, [id, parentId]);
 
-  // Handle input changes
+  // Validate individual field
+  const validateField = (name: keyof Service, value: string): string | undefined => {
+    const trimmedValue = value.trim();
+    if (name === 'title') {
+      if (!trimmedValue) return 'Service title is required';
+      if (trimmedValue.length < 3) return 'Service title must be at least 3 characters';
+      if (trimmedValue.length > 100) return 'Service title must be 100 characters or less';
+      if (!titleRegex.test(trimmedValue)) return 'Service title can only contain letters, spaces, apostrophes, and hyphens';
+    } else if (name === 'description') {
+      if (!trimmedValue) return 'Service description is required';
+      if (trimmedValue.length < 10) return 'Service description must be at least 10 characters';
+      if (trimmedValue.length > 500) return 'Service description must be 500 characters or less';
+      if (!descriptionRegex.test(trimmedValue)) return 'Service description contains invalid characters';
+    } else if (name === 'icon' && trimmedValue) {
+      if (trimmedValue.length > 50) return 'Icon name must be 50 characters or less';
+      if (!iconRegex.test(trimmedValue)) return 'Icon name contains invalid characters';
+    }
+    return undefined;
+  };
+
+  // Handle input changes with real-time validation
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    // Validate the changed field
+    const error = validateField(name as keyof Service, value);
+    setErrors((prev) => ({
+      ...prev,
+      [name]: error,
+    }));
+  };
+
+  // Validate all fields on submit
+  const validateForm = (): FormErrors => {
+    const newErrors: FormErrors = {};
+    newErrors.title = validateField('title', formData.title);
+    newErrors.description = validateField('description', formData.description);
+    newErrors.icon = validateField('icon', formData.icon || '');
+    return newErrors;
   };
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title.trim()) {
-      setError('Service title is required');
-      return;
-    }
-    if (formData.title.length > 100) {
-      setError('Service title must be 100 characters or less');
-      return;
-    }
-    if (!formData.description.trim()) {
-      setError('Service description is required');
-      return;
-    }
-    if (formData.description.length > 500) {
-      setError('Service description must be 500 characters or less');
-      return;
-    }
-    if (formData.icon && formData.icon.length > 50) {
-      setError('Icon name must be 50 characters or less');
+    const newErrors = validateForm();
+    setErrors(newErrors);
+
+    // Check if there are any errors
+    if (Object.values(newErrors).some((error) => error)) {
       return;
     }
 
     setLoading(true);
-    setError(null);
     try {
       console.log('Updating service item with ID:', id, 'Parent ID:', parentId, 'Data:', formData);
       await ngrokAxiosInstance.put(`/dynamic/service/${parentId}/service-item/${id}`, {
-        title: formData.title,
-        description: formData.description,
-        icon: formData.icon || undefined, // Send undefined if icon is empty to match backend
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        icon: formData.icon?.trim() || undefined, // Send undefined if icon is empty
       });
       alert('Service item updated successfully!');
       navigate('/services', { state: { refresh: true } });
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to update service item');
+      const errorMessage = err.response?.data?.error || 'Failed to update service item';
+      setErrors({ title: errorMessage }); // Display API error as a title error
       console.error('Error updating service item:', err);
     } finally {
       setLoading(false);
@@ -121,10 +158,10 @@ export default function EditService() {
     );
   }
 
-  if (error || !service) {
+  if (!service) {
     return (
       <ComponentCard title="Edit Service">
-        <div className="text-red-500">{error || 'Service item not found'}</div>
+        <div className="text-red-500">{errors.title || 'Service item not found'}</div>
       </ComponentCard>
     );
   }
@@ -148,7 +185,9 @@ export default function EditService() {
               onChange={handleInputChange}
               placeholder="Enter service title"
               disabled={loading}
+              className={errors.title ? 'border-red-500' : ''}
             />
+            {errors.title && <div className="text-red-500 text-sm mt-1">{errors.title}</div>}
           </div>
           <div>
             <Label htmlFor="description">Description</Label>
@@ -158,10 +197,15 @@ export default function EditService() {
               value={formData.description}
               onChange={handleInputChange}
               placeholder="Enter service description"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-dark-900 dark:border-gray-600 dark:text-gray-200"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-dark-900 dark:border-gray-600 dark:text-gray-200 ${
+                errors.description ? 'border-red-500' : 'border-gray-300'
+              }`}
               rows={5}
               disabled={loading}
             />
+            {errors.description && (
+              <div className="text-red-500 text-sm mt-1">{errors.description}</div>
+            )}
           </div>
           <div>
             <Label htmlFor="icon">Icon (Optional)</Label>
@@ -173,9 +217,10 @@ export default function EditService() {
               onChange={handleInputChange}
               placeholder="Enter icon name (e.g., zap)"
               disabled={loading}
+              className={errors.icon ? 'border-red-500' : ''}
             />
+            {errors.icon && <div className="text-red-500 text-sm mt-1">{errors.icon}</div>}
           </div>
-          {error && <div className="text-red-500 text-sm">{error}</div>}
           <div className="flex gap-4 justify-end">
             <Button
               variant="outline"
@@ -187,11 +232,18 @@ export default function EditService() {
             </Button>
             <Button
               variant="primary"
-              
+              type= "submit" 
               className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700"
               disabled={loading}
             >
-              {loading ? 'Submitting...' : 'Save'}
+              {loading ? (
+                <span className="flex items-center">
+                  <Loader2 className="size-5 animate-spin mr-2" />
+                  Submitting...
+                </span>
+              ) : (
+                'Save'
+              )}
             </Button>
           </div>
         </form>
