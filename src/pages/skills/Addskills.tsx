@@ -6,26 +6,23 @@ import Label from '../../components/form/Label';
 import Input from '../../components/form/input/InputField';
 import Button from '../../components/ui/button/Button';
 
-// Define the Skill interface for form data
 interface SkillFormData {
   name: string;
-  percentage: number;
+  percentage: number | ''; 
 }
 
 export default function AddSkills() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const parentId = state?.parentId || '6856a9adba2983684f88c81a'; // Fallback to hardcoded ID
+  const parentId = state?.parentId || '6856a9adba2983684f88c81a'; 
 
-  // State for form fields
   const [formData, setFormData] = useState<SkillFormData>({
     name: '',
-    percentage: 0,
+    percentage: '', 
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Warn if parentId is missing
   React.useEffect(() => {
     if (!state?.parentId) {
       console.warn('parentId not provided; using fallback ID:', parentId);
@@ -34,10 +31,19 @@ export default function AddSkills() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === 'percentage' ? Math.max(0, Math.min(100, Number(value))) : value,
-    }));
+    if (name === 'name') {
+      if (/^[a-zA-Z\s\-_]*$/.test(value)) {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
+    } else if (name === 'percentage') {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value === '' ? '' : Math.max(0, Math.min(100, Number(value))),
+      }));
+    }
   };
 
   const handleSubmit = async () => {
@@ -49,11 +55,19 @@ export default function AddSkills() {
       setError('Skill name must be 50 characters or less');
       return;
     }
+    if (!/^[a-zA-Z\s\-_]+$/.test(formData.name)) {
+      setError('Skill name can only contain letters, spaces, hyphens, or underscores');
+      return;
+    }
+    if (formData.percentage === '') {
+      setError('Percentage is required');
+      return;
+    }
     if (formData.percentage < 0 || formData.percentage > 100) {
       setError('Percentage must be between 0 and 100');
       return;
     }
-    if (!Number.isInteger(formData.percentage)) {
+    if (!Number.isInteger(Number(formData.percentage))) {
       setError('Percentage must be an integer');
       return;
     }
@@ -63,8 +77,8 @@ export default function AddSkills() {
     try {
       await ngrokAxiosInstance.post(`/dynamic/ourSkills/${parentId}/skill`, {
         name: formData.name,
-        percentage: formData.percentage,
-      });
+        percentage: Number(formData.percentage), 
+       });
       alert('Skill added successfully!');
       navigate(-1); 
       window.history.replaceState(
@@ -80,7 +94,6 @@ export default function AddSkills() {
     }
   };
 
-  // Handle cancel action
   const handleCancel = () => {
     navigate(-1);
   };
@@ -96,22 +109,22 @@ export default function AddSkills() {
             name="name"
             value={formData.name}
             onChange={handleInputChange}
-            placeholder="Enter skill name"
+            placeholder="Enter skill name (letters, spaces, hyphens, or underscores)"
             disabled={loading}
-            
           />
         </div>
         <div>
           <Label htmlFor="percentage">Percentage (0-100)</Label>
           <Input
-          //   type="number"
+            type="number" 
             id="percentage"
             name="percentage"
             value={formData.percentage}
             onChange={handleInputChange}
-            placeholder="Enter percentage"
-          
-            step={1}
+            placeholder="Enter percentage (0-100)"
+            min="0"
+            max="100"
+            step="1"
             disabled={loading}
           />
         </div>

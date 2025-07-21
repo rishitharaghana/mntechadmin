@@ -109,11 +109,12 @@ export default function SkillsTable() {
 
   // Handle Edit action
   const handleEditClick = (skill: Skill) => {
+    console.log(skill)
     if (!parentId) {
       setError('Parent ID is not available');
       return;
     }
-    navigate(`/skills/edit/${skill._id}`, { state: { parentId } });
+    navigate(`/skills/edit/${skill._id}`, { state: { name:skill.name,percentage:skill.percentage } });
     setActiveMenu(null);
   };
 

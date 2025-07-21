@@ -1,112 +1,139 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router';
-import ngrokAxiosInstance from '../../hooks/axiosInstance';
-import ComponentCard from '../../components/common/ComponentCard';
-import Label from '../../components/form/Label';
-import Input from '../../components/form/input/InputField';
-import Button from '../../components/ui/button/Button';
-import { Loader2 } from 'lucide-react';
-import PageBreadcrumb from '../../components/common/PageBreadCrumb';
-import PageMeta from '../../components/common/PageMeta';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate, useLocation } from "react-router";
+import ngrokAxiosInstance from "../../hooks/axiosInstance";
+import ComponentCard from "../../components/common/ComponentCard";
+import Label from "../../components/form/Label";
+import Input from "../../components/form/input/InputField";
+import Button from "../../components/ui/button/Button";
+import { Loader2 } from "lucide-react";
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import PageMeta from "../../components/common/PageMeta";
 
-// Define the Skill interface based on the API data structure
 interface Skill {
   _id: string;
   name: string;
   percentage: number;
 }
 
+interface FormErrors {
+  name?: string;
+  percentage?: string;
+}
+
 export default function EditSkills() {
-  const { id } = useParams<{ id: string }>(); // Skill ID
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { state } = useLocation();
-  const parentId = state?.parentId || '685a486732d957d421ab6cf9'; // Fallback to provided parent ID
+  const parentId = state?.parentId || "685a486732d957d421ab6cf9";
 
-  // State for form fields
-  const [skill, setSkill] = useState<Skill | null>(null);
   const [formData, setFormData] = useState({
-    name: '',
-    percentage: 0,
+    name: "",
+    percentage: "",
   });
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  console.log("formData", formData);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [loading, setLoading] = useState(false);
 
-  // Warn if parentId is missing
-  useEffect(() => {
-    if (!state?.parentId) {
-      console.warn('parentId not provided; using fallback ID:', parentId);
-    }
-  }, [state, parentId]);
+  const nameRegex = /^[a-zA-Z\s'-]*$/;
 
-  // Fetch skill data on component mount
   useEffect(() => {
-    const fetchSkill = async () => {
-      try {
-        if (!id || !parentId) {
-          throw new Error('Skill ID or Parent ID is missing');
-        }
-        console.log('Fetching skill with ID:', id, 'Parent ID:', parentId);
-        const response = await ngrokAxiosInstance.get(`/dynamic/ourSkills/${parentId}/skill/${id}`);
-        console.log('API Response:', response.data); // Debug response
-        const skillData = response.data.data || response.data; // Adjust based on actual structure
-        setSkill(skillData);
-        setFormData({
-          name: skillData.name || '',
-          percentage: skillData.percentage || 0,
-        });
-      } catch (err: any) {
-        setError(err.response?.data?.error || 'Failed to fetch skill data');
-        console.error('Error fetching skill:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchSkill();
+    setFormData({
+      name: state.name || "",
+      percentage: state.percentage || "",
+    });
   }, [id, parentId]);
 
-  // Handle input changes
+  const validateField = (
+    name: keyof Skill,
+    value: string
+  ): string | undefined => {
+    const trimmedValue = value.trim();
+    if (name === "name") {
+      if (!trimmedValue) return "Skill name is required";
+      if (trimmedValue.length < 3)
+        return "Skill name must be at least 3 characters";
+      if (trimmedValue.length > 100)
+        return "Skill name must be 100 characters or less";
+      if (!nameRegex.test(trimmedValue))
+        return "Skill name can only contain letters, spaces, apostrophes, and hyphens";
+    } else if (name === "percentage") {
+      if (trimmedValue === "") return "Percentage is required";
+      const numValue = Number(trimmedValue);
+      if (isNaN(numValue)) return "Percentage must be a valid number";
+      if (numValue < 0 || numValue > 100)
+        return "Percentage must be between 0 and 100";
+    }
+    return undefined;
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'percentage' ? Math.max(0, Math.min(100, Number(value))) : value,
+      [name]: name === "percentage" ? value : value,
+    }));
+
+    const error = validateField(name as keyof Skill, value);
+    setErrors((prev) => ({
+      ...prev,
+      [name]: error,
     }));
   };
 
-  // Handle submit action
+  const validateForm = (): FormErrors => {
+    const newErrors: FormErrors = {};
+    newErrors.name = validateField("name", formData.name);
+    newErrors.percentage = validateField(
+      "percentage",
+      formData.percentage.toString()
+    );
+    return newErrors;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name.trim()) {
-      setError('Skill name is required');
-      return;
-    }
-    if (formData.name.length > 100) {
-      setError('Skill name must be 100 characters or less');
-      return;
-    }
-    if (formData.percentage < 0 || formData.percentage > 100) {
-      setError('Percentage must be between 0 and 100');
+    const newErrors = validateForm();
+    setErrors(newErrors);
+
+    if (Object.values(newErrors).some((error) => error)) {
       return;
     }
 
     setLoading(true);
-    setError(null);
     try {
-      console.log('Updating skill with ID:', id, 'Parent ID:', parentId, 'Data:', formData);
-      const response = await ngrokAxiosInstance.put(`/dynamic/ourSkills/${parentId}/skill/${id}`, formData);
-      console.log('Update Response:', response.data);
-      alert('Skill updated successfully!');
-      navigate('/skills', { state: { refresh: true } });
+      console.log(
+        "Updating skill with ID:",
+        id,
+        "Parent ID:",
+        parentId,
+        "Data:",
+        {
+          name: formData.name.trim(),
+          percentage: Number(formData.percentage),
+        }
+      );
+      const response = await ngrokAxiosInstance.put(
+        `/dynamic/ourSkills/${parentId}/skill/${id}`,
+        {
+          name: formData.name.trim(),
+          percentage: Number(formData.percentage),
+        }
+      );
+      console.log("Update Response:", response.data);
+      alert("Skill updated successfully!");
+      navigate("/skills", { state: { refresh: true } });
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to update skill');
-      console.error('Error updating skill:', err);
+      const errorMessage =
+        err.response?.data?.error || "Failed to update skill";
+      setErrors({ name: errorMessage });
+      console.error("Error updating skill:", err);
     } finally {
       setLoading(false);
     }
   };
 
   const handleCancel = () => {
-    navigate('/skills');
+    navigate("/skills");
   };
 
   if (loading) {
@@ -115,14 +142,6 @@ export default function EditSkills() {
         <Loader2 className="size-6 text-gray-500 animate-spin" />
         <span className="ml-2 text-gray-500">Loading...</span>
       </div>
-    );
-  }
-
-  if (error || !skill) {
-    return (
-      <ComponentCard title="Edit Skill">
-        <div className="text-red-500">{error || 'Skill not found'}</div>
-      </ComponentCard>
     );
   }
 
@@ -136,7 +155,7 @@ export default function EditSkills() {
       <ComponentCard title="Edit Skill">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <Label htmlFor="name">Skill Name</Label>
+            <Label htmlFor="name SecondaryName">Skill Name</Label>
             <Input
               type="text"
               id="name"
@@ -145,7 +164,11 @@ export default function EditSkills() {
               onChange={handleInputChange}
               placeholder="Enter skill name"
               disabled={loading}
+              className={errors.name ? "border-red-500" : ""}
             />
+            {errors.name && (
+              <div className="text-red-500 text-sm mt-1">{errors.name}</div>
+            )}
           </div>
           <div>
             <Label htmlFor="percentage">Percentage (0-100)</Label>
@@ -155,11 +178,16 @@ export default function EditSkills() {
               name="percentage"
               value={formData.percentage}
               onChange={handleInputChange}
-              placeholder="Enter percentage"
+              placeholder="Enter percentage 0-100"
               disabled={loading}
+              className={errors.percentage ? "border-red-500" : ""}
             />
+            {errors.percentage && (
+              <div className="text-red-500 text-sm mt-1">
+                {errors.percentage}
+              </div>
+            )}
           </div>
-          {error && <div className="text-red-500 text-sm">{error}</div>}
           <div className="flex gap-4 justify-end">
             <Button
               variant="outline"
@@ -171,6 +199,7 @@ export default function EditSkills() {
             </Button>
             <Button
               variant="primary"
+              type="submit"
               className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700"
               disabled={loading}
             >
@@ -180,7 +209,7 @@ export default function EditSkills() {
                   Submitting...
                 </span>
               ) : (
-                'Save'
+                "Save"
               )}
             </Button>
           </div>
