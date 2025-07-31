@@ -100,7 +100,7 @@ export default function CreateProductForm() {
     setServerError(null);
 
     try {
-      await ngrokAxiosInstance.post(`/dynamic/serviceSection/${parentId}/products`, formData);
+      await ngrokAxiosInstance.post(`/serviceSection/${parentId}/products`, formData);
       navigate('/it-services');
     } catch (err: any) {
       setServerError(err.response?.data?.error || 'Failed to create product');

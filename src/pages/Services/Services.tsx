@@ -53,7 +53,7 @@ export default function ServicesTable() {
       try {
         setLoading(true);
         setError(null);
-        const response = await ngrokAxiosInstance.get('/dynamic/service/');
+        const response = await ngrokAxiosInstance.get('/service/');
         const allServices = response.data.flatMap((service: Service) => service.services);
         const parentIdTemp = response.data[0]?._id || '685a7586a5646909c426b63c';
         setIndividualServices(allServices);
@@ -114,7 +114,7 @@ export default function ServicesTable() {
     }
     if (window.confirm('Are you sure you want to delete this service?')) {
       try {
-        await ngrokAxiosInstance.delete(`/dynamic/service/${parentId}/service-item/${service._id}`);
+        await ngrokAxiosInstance.delete(`/service/${parentId}/service-item/${service._id}`);
         setIndividualServices(individualServices.filter((s) => s._id !== service._id));
         console.log('Service item deleted:', service._id);
       } catch (error) {

@@ -38,7 +38,7 @@ export default function EditProductForm() {
     const fetchProduct = async () => {
       try {
         const response = await ngrokAxiosInstance.get(
-          `/dynamic/serviceSection/${parentId}/products/${itemId}`
+          `/serviceSection/${parentId}/products/${itemId}`
         );
         setFormData({
           title: response.data.title,
@@ -72,7 +72,7 @@ export default function EditProductForm() {
 
     try {
       await ngrokAxiosInstance.put(
-        `/dynamic/serviceSection/${parentId}/products/${itemId}`,
+        `/serviceSection/${parentId}/products/${itemId}`,
         formData
       );
       // Enhancement: Pass state to trigger table refresh if needed

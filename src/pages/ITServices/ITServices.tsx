@@ -54,7 +54,7 @@ export default function ServiceSectionTable() {
       try {
         setLoading(true);
         setError(null);
-        const response = await ngrokAxiosInstance.get('/dynamic/serviceSection');
+        const response = await ngrokAxiosInstance.get('/serviceSection');
         const data: ServiceSection = response.data;
         setSectionId(data._id);
         const combinedItems: TableItem[] = [
@@ -118,7 +118,7 @@ export default function ServiceSectionTable() {
       try {
         // Fix: Use 'itServices' instead of 'services' for Service type
         const type = item.type === 'Service' ? 'itServices' : 'products';
-        const endpoint = `/dynamic/serviceSection/${sectionId}/${type}/${item._id}`;
+        const endpoint = `/serviceSection/${sectionId}/${type}/${item._id}`;
         await ngrokAxiosInstance.delete(endpoint);
         setItems(items.filter((i) => i._id !== item._id));
         console.log(`${item.type} deleted:`, item._id);

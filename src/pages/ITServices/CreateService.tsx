@@ -100,7 +100,7 @@ export default function CreateServiceForm() {
     setServerError(null);
 
     try {
-      await ngrokAxiosInstance.post(`/dynamic/serviceSection/${parentId}/itServices`, formData);
+      await ngrokAxiosInstance.post(`/serviceSection/${parentId}/itServices`, formData);
       navigate('/it-services'); // Redirect to the table page after success
     } catch (err: any) {
       setServerError(err.response?.data?.error || 'Failed to create service');

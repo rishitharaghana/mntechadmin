@@ -108,7 +108,7 @@ export default function AddServices() {
     setLoading(true);
     try {
       await ngrokAxiosInstance.post(
-        `/dynamic/service/${parentId}/service-item`,
+        `/service/${parentId}/service-item`,
         {
           title: formData.title.trim(),
           description: formData.description.trim(),

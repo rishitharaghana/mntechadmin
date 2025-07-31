@@ -44,7 +44,7 @@ export default function EditServiceForm() {
     const fetchService = async () => {
       try {
         const response = await ngrokAxiosInstance.get(
-          `/dynamic/serviceSection/${parentId}/itServices/${itemId}`
+          `/serviceSection/${parentId}/itServices/${itemId}`
         );
         setFormData({
           title: response.data.title,
@@ -124,7 +124,7 @@ export default function EditServiceForm() {
 
     try {
       await ngrokAxiosInstance.put(
-        `/dynamic/serviceSection/${parentId}/itServices/${itemId}`,
+        `/serviceSection/${parentId}/itServices/${itemId}`,
         formData
       );
       navigate("/it-services");

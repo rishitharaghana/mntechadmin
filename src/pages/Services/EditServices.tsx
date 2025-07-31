@@ -51,7 +51,7 @@ export default function EditService() {
           throw new Error('Service item ID is missing');
         }
         console.log('Fetching service item with ID:', id, 'Parent ID:', parentId);
-        const response = await ngrokAxiosInstance.get(`/dynamic/service/${parentId}/service-item/${id}`);
+        const response = await ngrokAxiosInstance.get(`/service/${parentId}/service-item/${id}`);
         console.log('Fetched service item:', response.data);
         setService(response.data);
         setFormData({
@@ -128,7 +128,7 @@ export default function EditService() {
     setLoading(true);
     try {
       console.log('Updating service item with ID:', id, 'Parent ID:', parentId, 'Data:', formData);
-      await ngrokAxiosInstance.put(`/dynamic/service/${parentId}/service-item/${id}`, {
+      await ngrokAxiosInstance.put(`/service/${parentId}/service-item/${id}`, {
         title: formData.title.trim(),
         description: formData.description.trim(),
         icon: formData.icon?.trim() || undefined, // Send undefined if icon is empty
