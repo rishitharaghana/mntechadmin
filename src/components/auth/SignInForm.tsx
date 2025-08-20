@@ -17,12 +17,10 @@ export default function SignInForm() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,10 +38,8 @@ export default function SignInForm() {
         password: formData.password,
       });
 
-      // Store user data in local storage
       localStorage.setItem("user", JSON.stringify(response.data.data));
 
-      // Navigate to dashboard
       navigate("/");
     } catch (err: unknown) {
       console.error("Login error:", err);
