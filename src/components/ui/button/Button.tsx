@@ -8,6 +8,7 @@ interface ButtonProps {
   endIcon?: ReactNode; // Icon after the text
   onClick?: () => void; // Click handler
   disabled?: boolean; // Disabled state
+   type?: "button" | "submit" | "reset";
   className?: string; // Disabled state
 }
 
@@ -18,16 +19,15 @@ const Button: React.FC<ButtonProps> = ({
   startIcon,
   endIcon,
   onClick,
+   type = "button", // default
   className = "",
   disabled = false,
 }) => {
-  // Size Classes
   const sizeClasses = {
     sm: "px-4 py-3 text-sm",
     md: "px-5 py-3.5 text-sm",
   };
 
-  // Variant Classes
   const variantClasses = {
     primary:
       "bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300",
@@ -43,6 +43,7 @@ const Button: React.FC<ButtonProps> = ({
         disabled ? "cursor-not-allowed opacity-50" : ""
       }`}
       onClick={onClick}
+      type={type}
       disabled={disabled}
     >
       {startIcon && <span className="flex items-center">{startIcon}</span>}
