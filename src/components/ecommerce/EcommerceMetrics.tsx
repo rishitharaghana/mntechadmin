@@ -24,7 +24,7 @@ export default function EcommerceMetrics() {
     const fetchCounts = async () => {
       try {
         setLoading(true);
-        const response = await ngrokAxiosInstance.get('/auth/getAllCounts');
+        const response = await ngrokAxiosInstance.get('/auth/getall_counts');
         setCounts(response.data.data);
       } catch (err) {
         console.error('Error fetching counts:', err);
@@ -52,23 +52,21 @@ export default function EcommerceMetrics() {
     }
   };
 
-  // Map count types to route paths
   const getRouteForType = (type: string) => {
     switch (type) {
       case 'Team Count':
         return '/employees';
       case 'Subscribe Count':
-        return '/newLetter/all'; // Corrected from /newLetter/all to /newsletter/all
+        return '/newLetter/all';
       case 'ReachUs Count':
         return '/reachus';
       case 'Contact Us Count':
         return '/contact/contact_us';
       default:
-        return '#'; // Fallback route
+        return '#';
     }
   };
 
-  // Show loader while fetching data
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
