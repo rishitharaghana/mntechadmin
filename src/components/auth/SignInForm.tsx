@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import {  EyeCloseIcon, EyeIcon } from "../../icons";
+import { EyeCloseIcon, EyeIcon } from "../../icons";
 import { Loader2 } from "lucide-react";
+import axios from "axios"; // Import axios for isAxiosError
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
@@ -39,28 +40,18 @@ export default function SignInForm() {
       });
 
       localStorage.setItem("user", JSON.stringify(response.data.data));
-
       navigate("/");
     } catch (err: unknown) {
       console.error("Login error:", err);
-      
-      if (err && typeof err === "object" && "response" in err) {
-        const errorObj = err as {
-          response?: {
-            data?: {
-              error?: string;
-            };
-          };
-        };
+      setLoading(false); // Reset loading state
+      if (axios.isAxiosError(err)) {
         setError(
-          errorObj.response?.data?.error || "Login failed. Please try again."
+          err.response?.data?.error || "Login failed. Please try again."
         );
       } else {
-        setError("Login failed. Please try again.");
+        setError("An unexpected error occurred. Please try again.");
       }
     }
-    
-   
   };
 
   return (
@@ -120,9 +111,9 @@ export default function SignInForm() {
                 )}
                 <div>
                   <Button
+                    type="submit" // Ensure form submission
                     className="w-full"
                     size="sm"
-                  
                     disabled={loading}
                   >
                     {loading ? (
